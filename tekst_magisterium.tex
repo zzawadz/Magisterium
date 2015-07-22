@@ -17,6 +17,8 @@
 \usepackage{float}
 \usepackage{algorithm2e}
 
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{hyperref}
@@ -80,7 +82,13 @@ Pierwszym celem pracy jest prezentacja metody przygotowywania rzetelnych danych 
 
 \chapter{Wprowadzenie}
 
+\section{Ocena jakość strategii inwestycyjnej}
 
+
+
+Symulacja historyczna (ang. backtest) jest to  podstawowa procedura umożliwiająca ocenę jakość algorytmicznej strategii inwestycyjnej, na której opiera się w głównej mierze . 
+
+W backteście, na podstawie danych historycznych generowane są hipotetyczne momenty otwarcia i zamknięcia pozycji, a następnie na ich podstawie wyznaczany jest szereg zwrotów dla strategii, który w dalszej części może służyć do weryfikacji jakość określonej strategii inwestycyjnej.
 
 \section{Charakterystyka książki zleceń}
 
@@ -109,7 +117,6 @@ W niniejszej pracy analiza została ograniczona jedynie do pierwszego poziomu ks
 
 \section{Metody przygotowywania danych do testów}
 
-\section{Dane finansowe}
 
 Finansowe dane wysokiej częstotliwości, kojarzone są głównie z handlem wysokiej częstotliwości (HFT), w którym pozycje trzymane są w bardzo krótkich interwałach czasowych, często nie przekraczających jednej sekundy. Zastosowanie tego typu danych wymaga posiadania odpowiedniej infrastruktury do przechowywania tego typu danych, jak i ich analizy. Dla przykładu jeden miesiąc HFD dla kontraktu fES.H15 zajmuje w postaci binarnej około 600 megabajtów, w postaci skompresowanej jest to ok. 60 megabajtów. Należy nadmienić, że ilość instrumentów finansowych może być liczona w dziesiątkach tysięcy.
 
@@ -136,15 +143,20 @@ Brak aktywności transakcyjnej nie oznacza jednak braku aktywności w ogóle. W 
 
 \subsection{Przeprowadzanie symulacji historycznych z wykorzystaniem danych OHLCV}
 
+
 Jednocześnie dla każdej świeczki OHLCV powinny zostać stworzone towarzyszące świeczki zbudowane z wykorzystaniem cen Bid i Ask. Zostaną one użyte w symulacjach historycznych (backtestach), do otwierania i zamykania pozycji. Ma to szczególne znaczenie w przypadku mniej płynnych aktywów, w których spread pomiędzy Bidem i Askiem może być bardzo znaczący - na rysunku \ref{fig:cottonOrder} w pewnych momentach stosunek spreadu do ceny Mid wynosi $0.7\%$, co oznacza, że cena wykonania zlecania kupna byłaby niedoszacowana o ok $0.35\%$, natomiast cena wykonania zleceń sprzedaży byłaby przeszacowana o tę wartość. Oznaczałoby to, że w testach pozycje zajmowane byłby po bardziej atrakcyjnych cenach niż były dostępne w rzeczywistości, a uzyskany wynik byłby przeszacowany. Ma to szczególne znaczenie w przypadku strategii o dużej częstotliwości transakcyjnej, w których efekt wykorzystania cen Mid (lub cen wyznaczonych na podstawie transakcji) jest dodatkowo potęgowany przez ilość transakcji, w skrajnych przypadkach, cały zysk określonej strategii inwestycyjnej może wynikać jedynie z tego efektu.
 
-Dlatego też należy z uwagą podchodzić do wyników algorytmicznych strategii inwestycyjnych prezentowanych w literaturze, gdyż prezentowane w nich wyniki mogą nie uwzględniać opisanego efektu związanego z użytymi danymi, a co za tym idzie są nie możliwe do odtworzenia w poprawnych warunkach testowych. 
+Dlatego też należy z dużą uwagą podchodzić do wyników algorytmicznych strategii inwestycyjnych przedstawionych w literaturze, gdyż prezentowane w nich wyniki mogą nie uwzględniać opisanego efektu związanego z użytymi danymi, a co za tym idzie są nie one możliwe do odtworzenia w poprawnych warunkach testowych. 
 
 Jednocześnie dane wysokiej częstotliwości, w oparciu o które powinny być budowane szeregi czasowe do testów, są dostępne jedynie odpłatnie, co znacząco podnosi próg wejścia dla algorytmicznych funduszy inwestycyjnych.
 
+%\subsection{Filtrowanie danych historycznych i danych na "żywo"}
+
+
+
 \section{Charakterystyka danych wysokiej częstotliwości - stylizowane fakty}
 
-Dane wysokiej częstotliwości charakteryzują się innymi własnościami niż klasycznie prezentowane własności finansowych szeregów czasowych. Co więcej, celem tej pracy jest wykorzystanie danych wysokiej częstotliwości do konstrukcji rzetelnych danych niższej częstotliwości, które będą użyteczne w dalszym modelowaniu statystycznym. Dlatego też pewne stylizowane fakty o klasycznie prezentowanych danych finansowych, takie jak grube ogony, czy grupowanie zmienności, w przypadku danych wysokiej częstotliwości nie mają w zasadzie znaczenia, lub nie mają znaczącego wpływu na cel  pracy. 
+Dane wysokiej częstotliwości charakteryzują się innymi własnościami niż klasycznie prezentowane własności finansowych szeregów czasowych. Co więcej, celem tej pracy jest wykorzystanie danych wysokiej częstotliwości do konstrukcji rzetelnych danych niższej częstotliwości, które będą użyteczne w dalszym modelowaniu statystycznym. Dlatego też pewne stylizowane fakty o klasycznie prezentowanych danych finansowych, takie jak grube ogony, czy grupowanie zmienności, w przypadku danych wysokiej częstotliwości nie mają w zasadzie znaczenia, lub nie mają znaczącego wpływu na cel pracy. 
 
 By lepiej przedstawić charakterystykę HFD prezentowane są pewne stylizowane fakty uzyskane w trakcie prac z tymi danymi.
 
@@ -176,7 +188,7 @@ Jednocześnie w większości przypadków ilość BidTick i AskTick jest zbliżon
 
 Z faktu konstrukcji książki zleceń wynika iż, nie jest możliwe by Bid był większy od Ask, gdyż w takiej sytuacji dochodzi do zawarcia transakcji. Jednakże z faktu, że dane mogą przychodzić asynchronicznie ten warunek nie zawsze musi być spełniony. Rysunek \ref{fig:fpah15} prezentuje taką sytuację, w której $Bid > Ask$, mimo że nie doszło do żadnej transakcji. Należy zaznaczyć, że stworzony na potrzeby pracy program do wizualizacji HFD, w danym punkcie czasowym zaznacza to zdarzenie które miało miejsce pierwsze. Oznacza to, że w przypadku w którym pojawiają się dwa Ticki o tym samym znaczniku czasowym i cenie, kolor na wykresie będzie odpowiadał pierwszemu z nich. Najbardziej wiarygodnym wyjaśnieniem tej sytuacji jest anulowanie zlecenia zaznaczonego w punkcie A, jednak informacja na ten temat dostępna jest dopiero później. Całe zdarzenie miało miejsce w przedziale czasowym mniejszym niż jedna sekunda.
 
-Sam spread podlega znaczenie mniejszym wahaniom niż same wartości Bid I Ask.
+Sam spread podlega znaczenie mniejszym wahaniom niż same wartości Bid i Ask.
 
 \begin{figure}[H]
   \centering
@@ -187,13 +199,51 @@ Sam spread podlega znaczenie mniejszym wahaniom niż same wartości Bid I Ask.
 
 \chapter{Obserwacje odstające w HFD}
 
-Głównym problemem związanym z 
+\section{Obserwacje odstające w finansach}
+
+Obserwacje odstające mogą mogą w pewnym stopniu być łączone z różnorodnymi błędami grubymi, dla przykładu obserwacja odstająca może pojawić się na etapie przepisywania danych poprzez przesunięcia przecinka, błędu w odczycie skali miernika itp. Jednakże definiowanie odstawania poprzez występowanie błędów grubych jest niewystarczające, gdyż w pewnych sytuacjach obserwacje mogą być w pełni poprawne, jednak ich użycie może znacząco zaburzyć wykonywane analizy. Przykładem takiej sytuacji mogą być dzienne zwroty dla pary walutowej EURCHF które prezentuje rysunek \ref{fig:eurchf}. Do dnia 14 stycznia 2015 roku dzienne zwroty zawierały się w przedziale od $-0.19\%$, do $0.26\%$. Natomiast od 16 stycznia ten przedział rozszerzył się do $(-1.1 \%; 3\%)$. Obserwacja z dnia 15 stycznia wynosi aż $-18.4\%$. W przypadku prostej, wizualnej analizy obserwacji w celu wykrycia obserwacji odstających taka wartość mogłaby zostać uznana za błąd polegający właśnie na przesunięciu przecinka, jednak jest to wartość całkowicie poprawna, która wynikła ze zdarzenia które miało miejsce w tym dniu. 15 stycznia 2015 roku Bank Centralny Szwajcarii ogłosił, iż przestanie bronić ustalonego kursu Franka wobec Euro, co spotkało się z bardzo gwałtowną reakcją inwestorów na całym świecie. Jednak mimo tego, iż ta obserwacja jest w pełni prawdziwa, znacząco odbiega od reszty obserwacji, a powtórne wystąpienie wartości na podobnym poziomie jest skrajnie nieprawdopodobne (wynikało ono z kompletnego zaskoczenia uczestników na rynku). Użycie takiej obserwacji w analizach dotyczących ryzyka (np. przy estymacji wartości zagrożonej), może prowadzić do znaczącego przeszacowania ryzyka w przyszłych okresach.
+
+Dlatego też na potrzeby pracy obserwacja odstająca będzie definiowana jako obserwacja która w relacji do większości próby budzi zaskoczenie \citep{Ripley2004}. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/EURCHF}
+  \caption{Dzienne zwroty na parze walutowej EURCHF. Obserwacja z dnia 2015-01-15 wyraźnie odbiega od reszty wartości.}
+  \label{fig:eurchf}
+\end{figure}
 
 
 \section{Zastosowanie metod statystyki odpornej}
 
+Każda procedura statystyczna konstruowana jest przy założeniu spełnienia określonych założeń, co do mechanizmu generującego dane. Przykładowo, dane generowane są przez rozkład normalny, a obserwacje są niezależne. Niestety w praktycznych przypadkach bardzo często nie można zapewnić iż wymagane przez procedurę założenia są spełnione. W takich przypadkach dalsze wnioskowanie statystyczne może być nieuprawnione, gdyż albo nieznane są w ogóle własności tych procedur, albo wymagania co do jakości uzyskanych estymatorów (obciążenie, efektywność, etc.) są niemożliwe do spełnienia.
 
+Podejście proponowane przez statystykę odporną ma na celu prezentację procedur dających wiarygodne oszacowania nie tylko w przypadku, gdy dane generowane są przez zakładany rozkład, lecz również w przypadku gdy rozkład generujący dane odbiega od zakładanego. Odporna procedura statystyczna powinna dawać wiarygodne oszacowania również w przypadku gdy analizowany zbiór danych zawiera obserwacje odstające\citep{Van:2000}. Przykłady użycia odpornej procedury statystycznej prezentują rysunki \ref{lad1} i \ref{lad2}.
 
+\begin{figure}[H]
+\begin{subfigure}[t]{0.45\textwidth}
+  \includegraphics[width=\linewidth]{wykresy/ladout}
+	\caption{Obserwacja odstająca ze względu na zmienną objaśniającą.}
+	\label{lad1}  
+\end{subfigure}
+\begin{subfigure}[t]{0.45\textwidth}
+  \includegraphics[width=\linewidth]{wykresy/ladouty}
+  \caption{Obserwacja odstająca ze względu na zmienną objaśnianą.}
+  \label{lad2}
+\end{subfigure}
+\caption{Przykładowe porównanie działania klasycznych (MNK i LAD) i odpornych (NGR - metoda największej głębi regresyjnej) estymatorów prostej regresji.}
+\caption*{Źródło: Obliczenia własne - R Project}
+\label{fig:lad}
+\end{figure}
+
+W przypadku prezentowanego problemu występowania obserwacji odstających w danych finansowych zastosowanie procedur statystyki odpornej wydaje się być uzasadnione, a nawet konieczne, jednak napotyka na pewne praktyczne problemy.
+
+Procedury odporne są bardziej złożone obliczeniowo, od swoich klasycznych odpowiedników. O ile w przypadku potrzeby jednorazowej estymacji modelu z reguły różnice w czasie wykonywania nie są bardzo istotne, to specyfika testów jakim poddawane są strategie algorytmiczne wymaga wielokrotnej estymacji modelu, w której te różnice zyskują na znaczeniu, często nie pozwalając w ogóle na przeprowadzenie wiarygodnych testów w sensownym czasie. Dla przykładu, do wyznaczania wag dla portfela składającego się z 30 aktywów wykorzystywany jest klasyczny model Markowitza. Macierz kowariancji używana w obliczeniach wyznaczana jest na dwa sposoby, pierwszy wykorzystuje klasyczny estymator macierzy kowariancji, natomiast w drugim przypadku używany jest estymator MCD. W obu przypadkach brane jest pod uwagę ostatnie 504 obserwacje (dwa lata). Pojedynczy czas obliczeń w przypadku klasycznym wynosi 0.0003s, natomiast dla MCD około 1 sekundy. W symulacji na danych zawierających 10 lat, w której macierz kowariancji pomiędzy aktywami musi być obliczana dla każdego dnia, czas potrzebny na obliczenia estymatora klasycznego wyniesie łącznie ok 0.75 sekundy, natomiast dla estymatora MCD będą to aż 42 minuty. Zastosowanie estymatora odpornego tylko w tym jednym elemencie strategii sprawi, że czas obliczeń wydłuży się w znaczącym stopniu, przez co w danym okresie czasu będzie możliwe przetestowanie mniejszej ilości wariantów strategii. Równocześnie jednym z istotnych, kwestii jest zbadanie stabilności otrzymywanych wyników w pewnym otoczeniu parametrów strategii. W omawianym przykładzie mogłoby to wiązać się, ze sprawdzeniem jak zmieniają się wyniki w zależności od ilości obserwacji używanych do estymacji macierzy kowariancji. W takim przypadku, przy próbie sprawdzenie 50 różnych wariantów długości okna, obliczenia dla MCD zajęłyby około 50 godzin, przy czym jakiekolwiek inne obliczenia związane z logiką strategii są pomijane. 
+
+Drugi aspekt związany jest z samą specyfiką testów strategii inwestycyjnych. W klasycznie prowadzonej analizie statystycznej po estymacji modelu, przeprowadza się jego weryfikację , poprzez testy dopasowania, lub zdolności prognostyczne, bądź klasyfikacyjne na odpowiednio przygotowanych zbiorach testowych (cross-walidacja). W przypadku strategii algorytmicznych, stosowane procedury statystyczne wykorzystywane są do generowania sygnałów określających pozycję jaką w danej chwili czasowej powinna zająć strategia. Sama pozycja może być utrzymywana przez określony czas symulacji (np. do zakończenia sesji w danym dniu symulacji), bądź do otrzymania sygnału zamknięcia, lub sygnału otwarcia pozycji przeciwnej. Następnie na podstawie szeregu cen dla instrumentu wyznaczana jest wartość pozycji i kolejne jej zmiany, aż do zamknięcia. Następnie na podstawie pozycji które zajmowała strategia generowane są krzywe kapitału strategii. Stosowanie procedur odpornych do wyznaczania sygnałów, po to by uchronić się przed obserwacjami odstającymi w danych w pewnym sensie legitymuje ich występowanie w szeregu. W takim przypadku mogą one mieć wpływ na wyznaczone wartości pozycji, a za tym idzie na wiarygodność wyniku prezentowanego przez strategię, co w dalszym kroku nakładałoby wymóg stosowania również odpornych metod do weryfikacji rezultatów strategii, uniemożliwiając stosowanie metod klasycznych , takich jak wskaźnik Sharpe.  
+
+Dlatego też bardziej odpowiednim wydaje się usuwanie obserwacji odstających we wczesnym etapie symulacji, tak by nie miały one wpływu na stosowane procedury statystyczne, jak również wyznaczane wartości pozycji.
+
+Jednocześnie stosowanie metod odpornych w celu zabezpieczenia się przed odstępstwami od rozkładu zakładanego przez procedurę statystyczną w dalszym ciągu jest uprawnione. Jedynie odstępstwa te, nie powinny objawiać się jako obserwacje odstające.
 
 \chapter{Filtr}
 
@@ -212,9 +262,25 @@ Głównym problemem związanym z
 
 \subsection{Główne założenia}
 
-Zaprezentowany w dalszej części filtr został zbudowany w opariu o kilka założeń. ma przetważać dane online, co oznacza, że musi działać bardzo szybko (tak by nowa analiza obserwacji trawała krócej niż czas do pojawienia się kolejnej), jak również nie da się powrócić do obserwacji już przeanalizowanej (obserwacje nie są przechowywane).
+Zaprezentowany w dalszej części filtr został zbudowany w oparciu o cztery główne założenia.
 
-Kolejnym założeniem jest samo-naprawa filtra w przypadku nieprzewidzianych zdarzeń, a przede wszystkim niedopuszczenie do "zakleszczenia się" filtru, określanego jako sytuację w której wszystkie kolejne obserwacje z jednej, lub drugiej strony książki zleceń są odrzucane. 
+\begin{itemize}
+\item Dane mają być przetwarzane on-line. Oznacza to, że filtr musi działać bardzo szybko - tak by analiza pojedynczej obserwacji trwała krócej niż czas do pojawienia się kolejnej. Jednocześnie nie ma możliwości powrotu do obserwacji już przeanalizowanej (obserwacje nie są przechowywane).
+\item Filtr powinien posiadać zdolność samo-naprawy w przypadku nieprzewidzianych zdarzeń. Niedopuszczalne jest "zakleszczenia się" filtru, jest to sytuacja w której wszystkie kolejne obserwacje z jednej, lub drugiej strony książki zleceń są odrzucane.
+\item Koszt odrzucenia poprawnej obserwacji jest znacznie niższy, niż koszt przyjęcia za poprawną obserwacji odstającej. 
+\item Filtr jest w pełni deterministyczny.
+\end{itemize} 
+
+Motywacją pierwszego założenia wynika z wymagań obliczeniowych. Filtr jest jednym z elementów który przez pewien moment przetrzymuje obserwację, zanim trafi ona do dalszej części silnika zarządzającego strategią inwestycyjną. Oznacza to, że zastosowanie filtra wprowadza pewne opóźnienie, które sprawia, że strategia otrzymuje dane już w pewien sposób zdezaktualizowane, przez co na pewne gwałtowne sytuacje rynkowe może zadziałać z zbyt późno. Jednocześnie jeżeli jeżeli czas na analizę musi być mniejszy niż okres pomiędzy obserwacjami, inaczej opóźnienie przesyłania danych z filtra będzie się nawarstwiać.
+
+Należy również zwrócić uwagę, iż filtr będzie  stosowany równocześnie dla bardzo dużej liczby aktywów finansowych, przez co złożoność obliczeniowa jest dodatkowo potęgowana i może znacząco obciążać architekturę sprzętową. Z tego też powodu wprowadzono założenie, iż po jednokrotnym sprawdzeniu obserwacji nie ma już do niej powrotu, przez co znacząco minimalizowana jest złożoność pamięciowa realizowanego algorytmu.
+
+Drugie założenie odnosi się do bardzo złożonych zjawisk występujących na rynku które mogą doprowadzić do sytuacji w której filtr w pewien sposób się ''zakleszczy'', co znaczy, że wszystkie kolejne obserwacje będą odrzucane. Przykłady takich zdarzeń rynkowych  pojawią się wraz z omówieniem wprowadzonych mechanizmów samo-naprawy w filtrze prezentowanym w niniejszej pracy.
+
+Przypadek zakleszczenia się filtru jest bardzo groźny z punktu widzenia strategii, gdyż oznacza, że dane nie są przepuszczane do strategii, przez co niejako zostaje zatrzymane zarządzanie pozycją. Rozwiązaniem tego problemu jest stworzenie stosownego systemu ostrzeżeń, informującego o pojawiających się problemach (np. długa seria odrzuconych obserwacji). Jednak taki system wymaga nieustannego monitorowania (handel na międzynarodowym rynku odbywa się dwadzieścia cztery godziny na dobę), przez co może być nie praktyczny w realizacji. Dlatego też bardziej sensownym rozwiązaniem wydaje się wbudowanie pewnych metod naprawczych w sam filtr.
+
+
+
 
 
 
