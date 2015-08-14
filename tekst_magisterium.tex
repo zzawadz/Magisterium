@@ -278,7 +278,7 @@ Pewnym przykładem wpływu obserwacji odstającej na otrzymane wyniki będzie sy
 SH = \frac{\bar{r} - r_f}{sd(r)},
 \end{equation}
 
-gdzie $\bar{r}$, to średni zwrot portfela, $r_f$ - stopa wolna od ryzyka, w przykładzie będzie wynosić $0$, natomiast $sd(r)$ to odchylenie standardowe zwrotów. Dla pierwszego kwartału 2015 współczynnik Sharpe'a liczony dla danych dziennych wynosi $-0,09$. Jeżeli natomiast zostanie usunięta obserwacja z 15 stycznia (jedna z 63 obserwacji), współczynnik wyniesie 0,081 - jest to dosyć gwałtowna zmiana. Jednakże decyzja o usunięciu obserwacji odstającej w tym przypadku powinna leżeć w gestii analityka. Z jednej strony - w przypadku franka szwajcarskiego obserwacja obstająca znacząco zaburza wskazania współczynnika Sharpe'a
+gdzie $\bar{r}$, to średni zwrot portfela, $r_f$ - stopa wolna od ryzyka, w przykładzie będzie wynosić $0$, natomiast $sd(r)$ to odchylenie standardowe zwrotów. Dla pierwszego kwartału 2015 współczynnik Sharpe'a liczony dla danych dziennych wynosi $-0,09$. Jeżeli natomiast zostanie usunięta obserwacja z 15 stycznia (jedna z 63 obserwacji), współczynnik wyniesie 0,081 - jest to dosyć gwałtowna zmiana. Jednakże decyzja o usunięciu obserwacji odstającej w tym przypadku powinna leżeć w gestii analityka. Z jednej strony - w przypadku franka szwajcarskiego obserwacja obstająca znacząco zaburza wskazania współczynnika Sharpe'a, i pod dyskusję można poddać, czy potencjalnie wygenerowana strata jest wynikiem logiki strategii, która sprawiła, że tego dnia zajęta była pozycja długa, czy też jest to wypadek niezależny od logiki strategii i niemożliwy do przewidzenia. W przypadku analizy ryzyka (a więc i potencjalnych strat) sensownym wydaje się mimo wszystko pozostawienie tej obserwacji, gdyż jest ona wyrazem zjawiska wydawać by się mogło skrajnie  nieprawdopodobnego, które jednak miało miejsce. Mimo nieprzewidywalności takich zjawisk muszą one zostać uwzględnione na etapie budowania strategii, gdyż pojedyncza, bardzo duża strata może zmniejszyć zaufanie inwestorów, do konkretnego funduszu inwestycyjnego. Może to doprowadzić do wycofania zainwestowanego kapitału, a tym samym upadku funduszu. Więcej informacji na temat skrajnie nieprawdopodobnych zdarzeń można znaleźć w pracy \citep{Taleb2007}. Natomiast z punktu widzenia jakości sygnału generowanego przez strategię, można założyć, iż strategia nie mogła się obronić przed takim zjawiskiem i mimo, że tego dnia zajęta pozycja przyniosła katastrofalną stratę, w długim okresie generowany sygnał co do zajętej pozycji może być sensowny.
 
 
 
@@ -321,6 +321,61 @@ Drugi aspekt związany jest z samą specyfiką testów strategii inwestycyjnych.
 Dlatego też bardziej odpowiednim wydaje się usuwanie obserwacji odstających we wczesnym etapie symulacji, tak by nie miały one wpływu na stosowane procedury statystyczne, jak również wyznaczane wartości pozycji.
 
 Jednocześnie stosowanie metod odpornych w celu zabezpieczenia się przed odstępstwami od rozkładu zakładanego przez procedurę statystyczną w dalszym ciągu jest uprawnione. Jedynie odstępstwa te, nie powinny objawiać się jako obserwacje odstające.
+
+
+\section{Przykłady obserwacji odstających w HFD}
+
+Obserwacje odstające w danych wysokiej częstotliwości przejawiają się na wiele sposobów, przez co trudno zaproponować jeden, ogólny model ich powstawania. Rysunek \ref{fig:singleCT} prezentuje sytuację w której pojawia się pojedyncza obserwacja odstająca, daleko od głównej zbiorowości danych. Takie sytuacje mimo, tego iż w występują w danych dosyć często, są łatwe do wychwycenia. Dużo trudniejsze w czyszczeniu są dane przedstawione na wykresie \ref{fig:f6LJ15}, w których oprócz pojedynczych obserwacji odstających występują całe serie.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/singleCT.PNG}
+  \caption{BRN}
+  \label{fig:singleCT}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/f6LJ15.PNG}
+  \caption{BRN}
+  \label{fig:f6LJ15}
+\end{figure}
+
+\subsection{Poziome serie obserwacji obserwacji odstających}
+
+W pewnych przypadkach pojawiają się całe serie obserwacji odstających, na tym samym poziomie ceny. Rysunek \ref{fig:f6mh15} prezentuje sytuację w której obserwacje odstające pojawiają się wśród ticków transakcyjnych, co jest o tyle zaskakujące, gdyż transakcje powinny zachodzić w obrębie cen bid i ask, a na przedstawionym przykładzie dalece odbiegają od nich.
+
+Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na którym oprócz standardowej trajektorii cen bid i ask, pojawiają się ustawione w poziomej linii obserwacje, które w świetle zachowania reszty danych wydają się być odstające.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/f6mh15.PNG}
+  \caption{BRN}
+  \label{fig:f6mh15}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/f6LJ15Row.PNG}
+  \caption{BRN}
+  \label{fig:f6mh15}
+\end{figure}
+
+\subsection{Pionowe trajektorie obserwacji odstających}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/fCNH15.PNG}
+  \caption{BRN}
+  \label{fig:fCNH15}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/fCNH15ZOOM.PNG}
+  \caption{BRN}
+  \label{fig:fCNH15ZOOM}
+\end{figure}
 
 \chapter{Filtr}
 
