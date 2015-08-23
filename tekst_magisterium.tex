@@ -100,11 +100,10 @@ Szerszy przegląd zagadnień związanych z prowadzeniem bactestów można znale�
 
 \section{Książka zleceń}
 
-W przypadku prowadzenia 
 
 Kluczową konstrukcją w handlu na rynku finansowym jest książka zleceń. Zawiera ona wszystkie aktualne oferty kupna (Bid) i sprzedaży (Ask), dla danego instrumentu finansowego. W praktyce Bid i Ask używane są do określenia najlepszych cen kupna i sprzedaży. Sama książka zleceń składa się z poziomów, na których poszczególne zlecenia uporządkowane są malejąco dla ofert kupna i rosnąco dla ofert sprzedaży. W przypadku gdy pojawia się zlecenie kupna którego cena wykonania jest większa bądź równa od ceny dla dostępnych zleceń sprzedaży dochodzi do zawarcia transakcji, w przypadku zlecenia sprzedaży by doszło do transakcji cena zlecenia musi być niższa, bądź równa niż cena dostępnych zleceń kupna. Jeżeli pojawia się nowe zlecenia, które nie prowadzi do zawarcia transakcji trafia ono, na odpowiedni poziom książki zleceń. Przykład możliwego wyglądu książki zleceń zaprezentowano na listingu \ref{lst:exOb}.
 
-W pewnych zastosowaniach prowadzi się analizę głębokości (liczby poziomów) książki zleceń. Taka analiza pozwala określić płynność dla danego instrumentu i ocenić wpływ jaki może mieć wprowadzenie zlecenia określonej wielkości. Dla przykładu - jeżeli na pierwszych dziesięciu poziomach znajdują się zlecenia o wolumenie jeden (oferta dotyczy jednej jednostki określonego instrumentu finansowego), wtedy by zawrzeć transakcję opiewającą na 10 jednostek instrumentu finansowego cena zlecenia będzie musiała być co najmniej równa cenie z dziesiątego poziomu, a w niższych poziomach cena może znacząco odbiegać od aktualnej najlepszej dostępnej ceny na rynku.
+W pewnych zastosowaniach prowadzi się analizę głębokości (liczby poziomów) książki zleceń. Taka analiza pozwala określić płynność dla danego instrumentu i ocenić wpływ jaki może mieć wprowadzenie zlecenia określonej wielkości. Dla przykładu - jeżeli na pierwszych dziesięciu poziomach znajdują się zlecenia o wolumenie jeden (oferta dotyczy jednej jednostki określonego instrumentu finansowego), wtedy by zawrzeć transakcję opiewającą na 10 jednostek instrumentu finansowego cena zlecenia będzie musiała być co najmniej równa cenie z dziesiątego poziomu. Jednocześnie należy pamiętać, iż w niższych poziomach cena może znacząco odbiegać od aktualnej najlepszej dostępnej ceny na rynku.
 
 W wielu praktycznych sytuacjach jako cenę instrumentu przyjmuje się wartość najwyższej oferty kupna i najniższej oferty sprzedaży. Na ich podstawie wprowadza się następujące pojęcia, które będą używane w dalszej części pracy:
 
@@ -176,17 +175,33 @@ Jednocześnie dla każdej świeczki OHLCV powinny zostać stworzone towarzysząc
 
 Dlatego też należy z dużą uwagą podchodzić do wyników algorytmicznych strategii inwestycyjnych przedstawionych w literaturze, gdyż prezentowane w nich wyniki mogą nie uwzględniać opisanego efektu związanego z użytymi danymi, a co za tym idzie są nie one możliwe do odtworzenia w poprawnych warunkach testowych. 
 
-Jednocześnie dane wysokiej częstotliwości, w oparciu o które powinny być budowane szeregi czasowe do testów, są dostępne jedynie odpłatnie, co znacząco podnosi próg wejścia dla algorytmicznych funduszy inwestycyjnych. Jednocześnie dla pewnej grupy najbardziej płynnych instrumentów finansowych i klasy strategii inwestycyjnych nie charakteryzujących się niską częstotliwością zawierania transakcji przedstawiony efekt może być bez znaczenia.
+Jednocześnie dane wysokiej częstotliwości, w oparciu o które powinny być budowane szeregi czasowe do testów, są dostępne jedynie odpłatnie, co znacząco podnosi próg wejścia dla algorytmicznych funduszy inwestycyjnych. Jednocześnie dla pewnej grupy najbardziej płynnych instrumentów finansowych i klasy strategii inwestycyjnych charakteryzujących się niską częstotliwością\footnote{Im większa częstotliwość zawierania transakcji, tym większe znaczenie mają koszty transakcyjne, a nawet minimalne różnice związane ze zmianą ceny w czasie od momentu złożenia zlecenia aż do momentu wykonania.} zawierania transakcji przedstawiony efekt może być bez znaczenia.
 
-%\subsection{Filtrowanie danych historycznych i danych na "żywo"}
+\subsection{Czyszczenie danych historycznych i danych przychodzących online.}
+
+W przypadku posiadania bazy danych historycznych, istnieje możliwość oczyszczenia istniejących danych offline. W takim przypadku mogą zostać wykorzystane bardziej zaawansowane techniki wykrywania obserwacji odstających (pojedyncze obserwacje mogą być rozpatrywane względem przeszłych jak i przyszłych danych, por. Rys. \ref{fig:odst1} i Rys. \ref{fig:odst2}). Jednak takie postępowanie może okazać się niepoprawne, gdyż otrzymany szereg może być znacznie lepiej oczyszczony, a przez to mieć inne charakterystyki, niż szereg na którym rzeczywiście będzie pracować strategia. W takim przypadku może się okazać, iż przetestowana strategia bardzo dobrze sprawdza się na "czystych" danych, a nie zostanie wykryte, iż jakiekolwiek obserwacje odstające drastycznie zmieniają otrzymane wyniki. Z tego też powodu, istotnym może okazać się przeprowadzenie analizy wpływu jakości danych na wskazania strategii, w trakcie której pewne instrumenty mogą zostać nawet wykluczone z portfela, z powodu danych zbyt zanieczyszczonych danych.  
 
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=170mm, height=100mm]{wykresy/odst1}
+  \caption{Obserwacja czerwona w stosunku do reszty obserwacji (zarówno przeszłych i przyszłych) jest obserwacją odstającą.}
+  \label{fig:odst1}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=170mm, height=100mm]{wykresy/odst2}
+  \caption{Obserwacja czerwona jest początkiem nowego reżimu danych, dlatego też względem obserwacji przeszłych mogłaby być traktowana jako odstająca. Jednak w świetle dalszych obserwacji jest jak najbardziej poprawna.}
+  \label{fig:odst2}
+\end{figure}
 
 \section{Charakterystyka danych wysokiej częstotliwości - stylizowane fakty}
 
-Dane wysokiej częstotliwości charakteryzują się innymi własnościami niż klasycznie prezentowane własności finansowych szeregów czasowych. Co więcej, celem tej pracy jest wykorzystanie danych wysokiej częstotliwości do konstrukcji rzetelnych danych niższej częstotliwości, które będą użyteczne w dalszym modelowaniu statystycznym. Dlatego też pewne stylizowane fakty o klasycznie prezentowanych danych finansowych, takie jak grube ogony, czy grupowanie zmienności, w przypadku danych wysokiej częstotliwości nie mają w zasadzie znaczenia, lub nie mają znaczącego wpływu na cel pracy. 
+Dane wysokiej częstotliwości charakteryzują się innymi własnościami niż klasycznie prezentowane własności finansowych szeregów czasowych. Co więcej, celem tej pracy jest wykorzystanie danych wysokiej częstotliwości do konstrukcji rzetelnych danych niższej częstotliwości, które będą użyteczne w dalszym modelowaniu statystycznym. Dlatego też pewne stylizowane fakty dotyczące danych finansowych, takie jak grube ogony, czy grupowanie zmienności w przypadku danych HFD nie mają takiego znaczenia.
 
-By lepiej przedstawić charakterystykę HFD prezentowane są pewne stylizowane fakty uzyskane w trakcie prac z tymi danymi.
+By lepiej przedstawić charakterystykę HFD prezentowane są pewne stylizowane fakty, uzyskane w trakcie analizy tego typu danych.
 
 \subsection{Nierówne odstępy czasowe pomiędzy danymi}
 
@@ -206,11 +221,9 @@ Dane napływają w nieregularnych odstępach czasowych, silnie uzależnionych od
   \label{fig:volM}
 \end{figure}
 
-Co więcej
-
 \subsection{Różnorodna częstotliwość zdarzeń}
 
-Aktywność na książce zleceń w zależności od instrumentu charakteryzuje się bardzo różną intensywnością. Dla instrumentu przedstawionego na rysunku \ref{fig:cottonOrder} w okresie osiemnastu godzin doszło do 7277 zdarzeń, co daje około jedno zdarzenie na 10 sekund. Natomiast dla kontraktu E-Mini S\&P 500 przedstawionego na rysunku \ref{fig:spticks} w okresie 46 minut doszło do 200000 zdarzeń, co daje około 72 zdarzenia na sekundę. Z przytoczonego przykładu wynika iż aktywność pomiędzy instrumentami może różnić się dramatycznie - aktywność na kontraktach terminowych na E-Mini S\&P 500 może być nawet ponad siedemset razy większa niż na kontraktach na bawełnę.
+Aktywność na książce zleceń w zależności od instrumentu charakteryzuje się bardzo różną intensywnością. Dla instrumentu przedstawionego na rysunku \ref{fig:cottonOrder} w okresie osiemnastu godzin doszło do 7277 zdarzeń, co daje około jedno zdarzenie na 10 sekund. Natomiast dla kontraktu E-Mini S\&P 500 przedstawionego na rysunku \ref{fig:spticks} w okresie 46 minut doszło do 200000 zdarzeń, co daje około 72 zdarzenia na sekundę. Z przytoczonego przykładu wynika iż aktywność pomiędzy instrumentami może różnić się dramatycznie - obrót na kontraktach terminowych na E-Mini S\&P 500 może być nawet ponad siedemset razy większy niż na kontraktach na bawełnę.
 
 \begin{figure}[H]
   \centering
@@ -219,7 +232,8 @@ Aktywność na książce zleceń w zależności od instrumentu charakteryzuje si
   \label{fig:cottonOrder}
 \end{figure}
 
-Jednocześnie w większości przypadków ilość BidTick i AskTick jest zbliżona, jednak w pewnych sytuacjach mogą wystąpić znaczące różnice (np. w przypadku kontraktu zbliżającego się do wygaśnięcia). Taką sytuację prezentuje rysunek \ref{fig:fplh15} na którym widoczna jest sytuacja iż aktywność po stronie ask zniknęła całkowicie.
+Jednocześnie w większości przypadków ilość BidTick i AskTick jest zbliżona, jednak w pewnych sytuacjach mogą wystąpić znaczące różnice (np. w przypadku kontraktu zbliżającego się do wygaśnięcia). Taką sytuację prezentuje rysunek \ref{fig:fplh15} na którym widoczna jest sytuacja iż aktywność po stronie ask zniknęła całkowicie. W takim przypadku należy również rozważyć, czy obszary w których "znika" jedna ze stron książki zleceń należy uwzględnić w analizie, gdyż w takich okresach może nie być realnej możliwości handlu.  Na przykład uwagi na to, iż kontrakty terminowe mają określony termin zapadalności, charakteryzują się dosyć ściśle określonym schematem aktywności - w pierwszym okresie, zaraz po pojawieniu się danej serii na rynku występuje na nim bardzo mała płynność (a więc aktywność książki zleceń), dopiero w miarę zbliżania się do terminu zapadalności płynność rośnie, by w pewnym momencie załamać się \footnote{Takie załamanie aktywności może właśnie charakteryzować się "zniknięciem" jednej ze stron książki zleceń.}.
+Efekt załamania się aktywności na danej serii jest widoczny głównie na instrumentach w przypadku których inwestorzy posiadający pozycję w dniu wygaśnięcia kontraktu zobowiązani są do fizycznego dostarczenia towaru. Co więcej, szczegóły dostawy ustalane są w określonym dniu, zwykle na kilka tygodni przed wygaśnięciem kontraktu. W takim przypadku wszyscy inwestorzy niezainteresowani towarem (inwestujący w celach spekulacyjnych) przed tą datą zamykają pozycje i przechodzą na kolejną serię. W przypadku stosowania algorytmicznej strategii inwestycyjnej, należy stworzyć stosowny mechanizm przechodzenia na kolejne serie kontraktów terminowych, tak by nigdy nie wpaść w obszar obniżonej płynności.
 
 \begin{figure}[H]
   \centering
@@ -343,9 +357,9 @@ Obserwacje odstające w danych wysokiej częstotliwości przejawiają się na wi
 
 \subsection{Poziome serie obserwacji obserwacji odstających}
 
-W pewnych przypadkach pojawiają się całe serie obserwacji odstających, na tym samym poziomie ceny. Rysunek \ref{fig:f6mh15} prezentuje sytuację w której obserwacje odstające pojawiają się wśród ticków transakcyjnych, co jest o tyle zaskakujące, gdyż transakcje powinny zachodzić w obrębie cen bid i ask, a na przedstawionym przykładzie dalece odbiegają od nich.
+W pewnych przypadkach pojawiają się całe serie obserwacji odstających, na tym samym poziomie ceny. Rysunek \ref{fig:f6mh15} prezentuje sytuację w której obserwacje odstające pojawiają się wśród ticków transakcyjnych, co jest o tyle zaskakujące, gdyż transakcje powinny zachodzić w obrębie cen bid i ask, jednak na przedstawionym przykładzie dalece odbiegają od nich.
 
-Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na którym oprócz standardowej trajektorii cen bid i ask, pojawiają się ustawione w poziomej linii obserwacje, które w świetle zachowania reszty danych wydają się być odstające.
+Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na którym oprócz standardowej trajektorii cen bid i ask, pojawiają się ustawione w poziomej linii obserwacje, które w świetle zachowania reszty danych wydają się być odstające. Jedną z hipotez wyjaśniających powstawanie tego typu zjawisk może być błędy w przesyłaniu niższych poziomów książki zleceń, przez co oznaczane są one jako obserwacje z poziomu pierwszego. Jednak weryfikacja tejże hipotezy wymagałaby przeprowadzenia audytu systemu nadawcy jak i odbiorcy danych, co dalece wykracza poza ramy niniejszej pracy.
 
 \begin{figure}[H]
   \centering
@@ -363,6 +377,8 @@ Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na 
 
 \subsection{Pionowe trajektorie obserwacji odstających}
 
+Na rysunkach \ref{fig:fCNH15} przedstawiono serię obserwacji odstających idącą prawie górę, zmieniającą cenę ask z poziomu w okolicach 500, do wartości w granicach 900 w okresie mniejszym niż jedna sekunda (por. Rys. \ref{fig:fCNH15ZOOM}. Tego typu zmiana, zdaniem autora nie może być sensownie wytłumaczona i wszystkie te obserwacje należy uznać za odstające.
+
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fCNH15.PNG}
@@ -376,6 +392,9 @@ Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na 
   \caption{BRN}
   \label{fig:fCNH15ZOOM}
 \end{figure}
+
+
+Jednocześnie w pewnych bardzo rzadkich okolicznościach podobne zdarzenia mogą faktycznie mieć miejsce i nie można ich uznać za błędy systemu przesyłającego dane, a tym samym obserwacje odstające. Mogą jednak wynika z prób manipulacji rynkiem przez uczestników handlu wysokiej częstotliwości.
 
 \chapter{Filtr}
 
@@ -392,9 +411,10 @@ Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na 
 
 %% Parametry filtru
 
-\subsection{Główne założenia}
+\section{Główne założenia}
 
-Zaprezentowany w dalszej części filtr został zbudowany w oparciu o cztery główne założenia.
+Prezentowany filtr ma za zadanie usuwać obserwacje odstające, opierając się na stylizowanych faktach dotyczących danych wysokiej częstotliwości, jak również zaobserwowanych charakterystyk pojawiających się obserwacji odstających. Jednocześnie stara się wziąć pod uwagę cztery praktyczne wymagania pozwalające na jego implementację w rzeczywistym środowisku produkcyjnym:
+
 
 \begin{itemize}
 \item Dane mają być przetwarzane on-line. Oznacza to, że filtr musi działać bardzo szybko - tak by analiza pojedynczej obserwacji trwała krócej niż czas do pojawienia się kolejnej. Jednocześnie nie ma możliwości powrotu do obserwacji już przeanalizowanej (obserwacje nie są przechowywane).
@@ -420,7 +440,8 @@ Założenie określające, iż filtr jest w pełni deterministyczny jest pewnym 
 
 \subsection{Prezentacja algorytmu}
 
-Oznaczenia:
+W algorytmie będą używane następujące oznaczenia:
+
 \begin{itemize}
 \item \ts - obecna chwila czasowa.
 \item \tsl - czas ostatniego ticku.
@@ -430,7 +451,8 @@ Oznaczenia:
 \item \MSpo - średni spread w chwili \tsl, po aktualizacji.
 \end{itemize}
 
-Parametry filtru:
+Jednocześnie filtr posiada pewne stałe parametry które muszą zostać ustawione:
+
 \begin{itemize}
 \item $minSpread$ Minimalny spread dla instrumentu.
 \item $Multi$ - mnożnik średniego spreadu.
@@ -480,11 +502,40 @@ time - czas wystąpienia tiku.}
 
 Warunek \ref{War1} testuje, czy nowy spread nie odbiega w znaczący sposób od średniego spreadu, co sugeruje obserwacje odstającą. 
 
-Natomiast \ref{War2} ma na celu wychwycenie sytuacji, w której Bid przewyższa Ask w znaczący sposób. Samo zastosowanie warunku by $Bid < Ask$, jest nie wystarczające, gdyż dane pojawiają się w sposób asynchroniczny, przez co może dojść do sytuacji przedstawione na rysunku \ref{Fig:Cross} Dodatkowa granica \emph{CrossRange} pozwala wyłapać takie sytuacje, znacząco zmniejszając ilość niepotrzebnie odrzucanych ticków.
+Natomiast \ref{War2} ma na celu wychwycenie sytuacji, w której Bid przewyższa Ask w znaczący sposób. Samo zastosowanie warunku by $Bid < Ask$, jest nie wystarczające, gdyż dane pojawiają się w sposób asynchroniczny, przez co może dojść do sytuacji przedstawione na rysunku \ref{fig:Cross} Dodatkowa granica \emph{CrossRange} pozwala wyłapać takie sytuacje, znacząco zmniejszając ilość niepotrzebnie odrzucanych ticków.
 
-W linijce \ref{Zab1} spread przeliczany jest powtórnie, jednak z wykorzystaniem ostatniej odrzuconej ceny Ask. Powtórne sprawdzenie poprawności ticku pozwala zabezpieczyć działanie filtru w przypadkach dużych skoków cen. Scenariusz sytuacji występującej bez zastosowania takiego zabezpieczenia przedstawia rysunek \ref{fig:JUMP}. Jednocześnie może to prowadzić do zaakceptowania jako poprawne sytuacji w której krótko po sobie nastąpiły dwie obserwacje odstające (rysunek \ref{fig:NEXTOUT}).
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/cross}
+  \caption{BRN}
+  \label{fig:Cross}
+\end{figure}
 
-Linija \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filtru. W przypadku gdy dana cena Bid jest odrzucana, poprzez wartość RmVal następuje  podniesienie ceny Ask używanej do obliczeń wewnątrz filtru (sam filtr nie modyfikuje wartości tików). 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/relacjaBIDASK}
+  \caption{BRN}
+  \label{fig:JUMP}
+\end{figure}
+
+
+W linijce \ref{Zab1} spread przeliczany jest powtórnie, jednak z wykorzystaniem ostatniej odrzuconej ceny Ask. Powtórne sprawdzenie poprawności ticku pozwala zabezpieczyć działanie filtru w przypadkach dużych skoków cen. Scenariusz sytuacji występującej bez zastosowania takiego zabezpieczenia przedstawia rysunek \ref{fig:JUMP}. Jednocześnie może to prowadzić do zaakceptowania jako poprawne sytuacji w której krótko po sobie nastąpiły dwie obserwacje odstające po przeciwnej stronie książki zleceń (rysunek \ref{fig:NEXTOUT}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/nextout}
+  \caption{BRN}
+  \label{fig:NEXTOUT}
+\end{figure}
+
+Linia \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filtru. W przypadku gdy dana cena Bid jest odrzucana, poprzez wartość RmVal następuje  podniesienie ceny Ask używanej do obliczeń wewnątrz filtru (sam filtr nie modyfikuje wartości tików). Powoduje to, iż nawet w przypadku dużej asymetrii w ilości pojawiających się obserwacji po jednej stronie książki zleceń przekraczających granicę CrossRange, nowe obserwacje w końcu zostaną zaakceptowane (por. rys. \ref{fig:longStreak}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/longStreak}
+  \caption{BRN}
+  \label{fig:longStreak}
+\end{figure}
 
 %\begin{figure}[H]
 %  \centering
@@ -496,7 +547,7 @@ Linija \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się fil
 \subsection{Aktualizacja \MSpn}
 
 Listing \ref{FiltrUpdate} przedstawia sposób aktualizacji średniego spreadu \MSpn:
-
+\IncMargin{5em}
 \begin{algorithm}
 
 \eIf{TickAccepted}
@@ -509,29 +560,54 @@ Listing \ref{FiltrUpdate} przedstawia sposób aktualizacji średniego spreadu \M
 {
 \nlset{Zabezpieczenie 3}\label{Zab3} \MSpn = \MSpc + RmVal\\
 }
-
+\DecMargin{5em}
 
 \caption{Algorytm aktualizacji \MSpn \label{FiltrUpdate}}
 \end{algorithm}
 
 Nowa wartość \MSpn jest ważoną średnią poprzedniej wartości i aktualnego spreadu. Przy czym  waga \Spt zależna jest od czasu pomiędzy dwiema ostatnimi obserwacjami (\ref{uwg1ta}). Im krótszy czas, tym wpływ nowej wartości spreadu jest większy. Dostosowywanie wartości $\phi$ odbywa się poprzez parametr $\lambda$ - większe wartości $\lambda$ oznaczają większy wpływ \Spt na wartość \MSpn. 
 
-Dodatkowo wprowadzono parametr $\phi_{max}$, określający maksymalny udział aktualnego spreadu (\Spt) w \MSpn. Ma on na celu zapobieganie sytuacją zbytniego zmniejszenia się średniego spreadu gdy po dłuższym okresie jako pierwsze pojawi się tick którego spread względem starej przeciwnej ceny będzie bardzo mały, a spread dla następnych tików się powiększy, przez co kolejne obserwacje będą odrzucane, aż do momentu, odpowiedniego rozszerzenia się spreadu związnym z zabezpieczeniem \ref{Zab3}. W takiej sytuacji udział \Spt zostanie ograniczony do wartości $\phi_{max}$ Przykładowa sytuacja pokazana jest na rys. \ref{fig:deltaTime}. Jednocześnie należy zauważyć, że w pewnych przypadkach może to prowadzić do sytuacji w której spread będzie znacząco zawyżony. 
+Dodatkowo wprowadzono parametr $\phi_{max}$, określający maksymalny udział aktualnego spreadu (\Spt) w \MSpn. Ma on na celu zapobieganie sytuacją zbytniego zmniejszenia się średniego spreadu gdy po dłuższym okresie jako pierwsze pojawi się tick którego spread względem starej przeciwnej ceny będzie bardzo mały, a spread dla następnych tików się powiększy (lub nawet utrzyma się na podobnym poziomie), przez co kolejne obserwacje będą odrzucane, aż do momentu, odpowiedniego rozszerzenia się spreadu związnym z zabezpieczeniem \ref{Zab3}. W takiej sytuacji udział \Spt zostanie ograniczony do wartości $\phi_{max}$ Przykładowa sytuacja pokazana jest na rys. \ref{fig:longTime}. Jednocześnie należy zauważyć, że w pewnych przypadkach może to prowadzić do sytuacji w której spread będzie znacząco zawyżony. 
 
-W tym przypadku ujawnia się również dodatkowa słabość filtru mająca szczególne znaczenie w przypadku małej płynności instrumentu (rzadko pojawiających się danych). Dla pierwszej obserwacji po długim okresie spread może być liczony względem ceny która jest już nieaktualna, jednak nowa cena jeszcze się nie pojawiła \ref{fig:calcSpread}. W obecnym podejściu do filtracji danych, w którym założone jest działanie online (po sprawdzeniu tiku nie ma już do niego powrotu), obejście tego problemu jest bardzo trudne (o ile w ogóle możliwe). W pewnym stopniu rozwiązaniem jest wprowadzone wcześniej zabezpieczenie \ref{Zab1}, które nie dopuści do zakleszczenia się filtra, kosztem odrzucenia pierwszej obserwacji pojawiającej się po dłuższym okresie czasu (np. na otwarcie sesji).
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/longTime}
+  \caption{BRN}
+  \label{fig:longTime}
+\end{figure}
 
-Parametr $\phi_{min}$ określa minimalny udział \Spt w \MSpn. Przyspiesza on dostosowywanie się wartości średniego spreadu dla płynnego rynku. 
+W tym przypadku ujawnia się również dodatkowa słabość filtru mająca szczególne znaczenie w przypadku małej płynności instrumentu (rzadko pojawiających się danych). Dla pierwszej obserwacji po długim okresie spread może być liczony względem ceny która jest już nieaktualna, jednak nowa cena jeszcze się nie pojawiła. W obecnym podejściu do filtracji danych, w którym założone jest działanie online (po sprawdzeniu tiku nie ma już do niego powrotu), obejście tego problemu jest bardzo trudne (o ile w ogóle możliwe). W pewnym stopniu rozwiązaniem jest wprowadzone wcześniej zabezpieczenie \ref{Zab1}, które nie dopuści do zakleszczenia się filtra po skoku ceny.
 
-Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filtru. Rozszerzenie spreadu o wartość $RmVal$ pozwala na samo-naprawienie się filtru w sytuacji w której nastąpił gwałtowny skok spreadu, kosztem kilku pierwszych obserwacji (por. \ref{fig:SpreadJump}). Takie zabezpieczenie posiada oczywistą wadę w przypadku całej serii złych danych - powolne rozszerzanie się średniego spreadu w końcu spowoduje, że obserwacje odstające zostaną uznane za poprawne (por \ref{fig:outSeries}). W tym przypadku należy dokonać wyboru dotyczącego wrażliwości filtru na długie serie złych danych, a szybkością samonaprawy w przypadku zakleszczenia. 
+Parametr $\phi_{min}$ określa minimalny udział \Spt w \MSpn. Przyspiesza on dostosowywanie się wartości średniego spreadu dla płynnego rynku, w którym czas pomiędzy kolejnymi obserwacjami jest bardzo krótki.
+
+Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filtru. Rozszerzenie spreadu o wartość $RmVal$ pozwala na samo-naprawienie się filtru w sytuacji w której nastąpił gwałtowny skok spreadu, kosztem kilku pierwszych obserwacji (por. \ref{fig:spreadJump}). Takie zabezpieczenie posiada oczywistą wadę w przypadku całej serii złych danych - powolne rozszerzanie się średniego spreadu w końcu spowoduje, że obserwacje odstające zostaną uznane za poprawne (por \ref{fig:outSeries}). W tym przypadku należy dokonać wyboru dotyczącego wrażliwości filtru na długie serie złych danych, a szybkością samonaprawy w przypadku zakleszczenia. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/spreadJump}
+  \caption{BRN}
+  \label{fig:spreadJump}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=110mm, height=100mm]{wykresy/outSeries}
+  \caption{BRN}
+  \label{fig:outSeries}
+\end{figure}
 
 
 \chapter{Model symulacyjny}
 
 Kluczową sprawą w testowaniu działania filtra danych jest możliwość stworzenia stosownego środowiska testowego, które w wiarygodny sposób symuluje rzeczywiste zachowanie się książki zleceń. W takim środowisku obserwacje odstające znane są apriori (tzn. wiadomo którą obserwację proces symulujący książkę zleceń wygenerował jako odstającą). W takim środowisku ocena jakości filtra może być przeprowadzona w oparciu o ilość odrzuconych obserwacji, które w rzeczywistości nie były odstające, jak również ilość zaakceptowanych obserwacji odstających.
 
-Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Co więcej, żaden z prezentowanych w literaturze modeli nie uwzględnia możliwości pojawienia się obserwacji odstających w książce zleceń, jak również zdaniem autora nie uwzględnia w wystarczający sposób charakterystyki kontraktów terminowych. Z uwagi na to, iż kontrakty terminowe mają określony termin zapadalności, charakteryzują się dosyć ściśle określonym schematem aktywności - w pierwszym okresie, zaraz po pojawieniu się danej serii na rynku występuje na nim bardzo mała płynność (a więc aktywność książki zleceń), dopiero w miarę zbliżania się do terminu zapadalności płynność rośnie, by w pewnym momencie załamać się\footnote{Efekt załamania się aktywności na danej serii jest widoczny głównie na instrumentach w przypadku których inwestorzy posiadający pozycję w dniu wygaśnięcia kontraktu zobowiązani są do fizycznego dostarczenia towaru. Co więcej, szczegóły dostawy ustalane są w określonym dniu, zwykle na kilka tygodni przed wygaśnięciem kontraktu. W takim przypadku wszyscy inwestorzy niezainteresowani towarem (inwestujący w celach spekulacyjnych) przed tą datą zamykają pozycje i przechodzą na kolejną serię.}. 
+Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Co więcej, żaden z prezentowanych w literaturze modeli nie uwzględnia możliwości pojawienia się obserwacji odstających w książce zleceń, jak również zdaniem autora nie uwzględnia w wystarczający sposób charakterystyki kontraktów terminowych (różnice w płynności w trakcie życia kontraktu). 
 
-Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględnia w sobie specyfikę kontraktów terminowych, jak również złożone charakterystyki możliwych ścieżek obserwacji odstających dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych.
+Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględnia w sobie specyfikę kontraktów terminowych, jak również złożone charakterystyki możliwych ścieżek obserwacji odstających dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych. W pierwszej fazie przeprowadzono subiektywne, ręczne czyszczenie rzeczywistych danych. Następnie wyniki czyszczenia ręcznego zostały porównane z czyszczeniem rzeczywistym.
+
+\subsection{Wyniki filtrowania}
+
+\subsection{Problemy filtra} 
 
 \bibliographystyle{plainnat}
 \bibliography{literatura_mag}
