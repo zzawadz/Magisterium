@@ -157,14 +157,14 @@ Brak aktywności transakcyjnej nie oznacza jednak braku aktywności w ogóle. W 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/cottonTickH.PNG}
-  \caption{Przypadel zakleszczenia się filtru. Po nagłym zwiększeniu się spreadu wszystkie kolejne ticki są usuwane.}
+  \caption{Transakcje na marcowym kontrakcie terminowym na bawełnę w 2015 roku. Przez większą część sesji nie pojawiają się żadne obserwacje.}
   \label{fig:cottonTrans}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/cottonOrderH.PNG}
-  \caption{Przypadel zakleszczenia się filtru. Po nagłym zwiększeniu się spreadu wszystkie kolejne ticki są usuwane.}
+  \caption{Aktywność na pierwszym poziomie książki zleceń na marcowy kontrakt na bawełnę w 2015 roku. Mimo, iż przez większą część sesji nie pojawiają się transakcje, książka zleceń jest aktywna i ceny Bid i Ask cały czas ewokują.}
   \label{fig:cottonOrder}
 \end{figure}
 
@@ -225,12 +225,6 @@ Dane napływają w nieregularnych odstępach czasowych, silnie uzależnionych od
 
 Aktywność na książce zleceń w zależności od instrumentu charakteryzuje się bardzo różną intensywnością. Dla instrumentu przedstawionego na rysunku \ref{fig:cottonOrder} w okresie osiemnastu godzin doszło do 7277 zdarzeń, co daje około jedno zdarzenie na 10 sekund. Natomiast dla kontraktu E-Mini S\&P 500 przedstawionego na rysunku \ref{fig:spticks} w okresie 46 minut doszło do 200000 zdarzeń, co daje około 72 zdarzenia na sekundę. Z przytoczonego przykładu wynika iż aktywność pomiędzy instrumentami może różnić się dramatycznie - obrót na kontraktach terminowych na E-Mini S\&P 500 może być nawet ponad siedemset razy większy niż na kontraktach na bawełnę.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.5]{wykresy/cottonOrderH.PNG}
-  \caption{Kontrakt terminowy na bawełnę.}
-  \label{fig:cottonOrder}
-\end{figure}
 
 Jednocześnie w większości przypadków ilość BidTick i AskTick jest zbliżona, jednak w pewnych sytuacjach mogą wystąpić znaczące różnice (np. w przypadku kontraktu zbliżającego się do wygaśnięcia). Taką sytuację prezentuje rysunek \ref{fig:fplh15} na którym widoczna jest sytuacja iż aktywność po stronie ask zniknęła całkowicie. W takim przypadku należy również rozważyć, czy obszary w których "znika" jedna ze stron książki zleceń należy uwzględnić w analizie, gdyż w takich okresach może nie być realnej możliwości handlu.  Na przykład uwagi na to, iż kontrakty terminowe mają określony termin zapadalności, charakteryzują się dosyć ściśle określonym schematem aktywności - w pierwszym okresie, zaraz po pojawieniu się danej serii na rynku występuje na nim bardzo mała płynność (a więc aktywność książki zleceń), dopiero w miarę zbliżania się do terminu zapadalności płynność rośnie, by w pewnym momencie załamać się \footnote{Takie załamanie aktywności może właśnie charakteryzować się "zniknięciem" jednej ze stron książki zleceń.}.
 Efekt załamania się aktywności na danej serii jest widoczny głównie na instrumentach w przypadku których inwestorzy posiadający pozycję w dniu wygaśnięcia kontraktu zobowiązani są do fizycznego dostarczenia towaru. Co więcej, szczegóły dostawy ustalane są w określonym dniu, zwykle na kilka tygodni przed wygaśnięciem kontraktu. W takim przypadku wszyscy inwestorzy niezainteresowani towarem (inwestujący w celach spekulacyjnych) przed tą datą zamykają pozycje i przechodzą na kolejną serię. W przypadku stosowania algorytmicznej strategii inwestycyjnej, należy stworzyć stosowny mechanizm przechodzenia na kolejne serie kontraktów terminowych, tak by nigdy nie wpaść w obszar obniżonej płynności.
@@ -238,14 +232,14 @@ Efekt załamania się aktywności na danej serii jest widoczny głównie na inst
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fESH.PNG}
-  \caption{Kontrakt terminowy na }
+  \caption{Aktywność na marcowym kontrakcie terminowym na E-Mini S\&P 500 w 2015 roku. W ciągu około 46 minut pojawiło się 200000 ticków, co daje około 72 zdarzenia na sekundę.}
   \label{fig:spticks}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fplh15.PNG}
-  \caption{Kontrakt terminowy na pallad.}
+  \caption{Aktywność na marcowym kontrakcie terminowym na pallad w 2015 roku. W pewnym momencie aktywność po stronie ask w zasadzie zniknęła i przez kilkanaście godzin nie pojawiła się żadna zmiana po tej stronie książki zleceń.}
   \label{fig:fplh15}
 \end{figure}
 
@@ -257,7 +251,7 @@ Z faktu konstrukcji książki zleceń wynika iż, nie jest możliwe by Bid był 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fpah15.PNG}
-  \caption{fESH.}
+  \caption{fESH. Sytuacja w której przez bardzo krótki czas może być obserwowana sytuacja w której $Bid > Ask$, mimo iż w takim przypadku powinna być niemożliwa, gdyż powinno dojść do zawarcia transakcji.}
   \label{fig:fpah15}
 \end{figure}
 
@@ -266,14 +260,14 @@ Rysunek \ref{fig:fBRNJ15} przedstawia ewolucję ceny instrumentu fBRNJ15 (górny
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fBRNJ15.PNG}
-  \caption{BRN}
+  \caption{Kontrakt terminowy na ropę. Zestawienie ewolucji Bid i Ask z obserwowanym spreadem (dolny wykres).}
   \label{fig:fBRNJ15}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fBRNJ15Spread.PNG}
-  \caption{BRN}
+  \caption{Kontrakt terminowy na ropę. W ciągu mniej niż sekundy spread z poziomu ok $0,02$ zwiększył się prawie dwuipółkrotnie do poziomu ok. 0,05, by następnie spaść do poziomu ok. 0,022.}
   \label{fig:fBRNJ15Spread}
 \end{figure}
 
@@ -299,7 +293,7 @@ gdzie $\bar{r}$, to średni zwrot portfela, $r_f$ - stopa wolna od ryzyka, w prz
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/EURCHF}
-  \caption{Dzienne zwroty na parze walutowej EURCHF. Obserwacja z dnia 2015-01-15 wyraźnie odbiega od reszty wartości.}
+  \caption{Dzienne zwroty na parze walutowej EURCHF. Obserwacja z dnia 2015-01-15 wyraźnie odbiega od reszty wartości, jednak jest obserwacją poprawną, która wynika z decyzji Centralnego Banku Szwajcarii ogłoszonej tego dnia.}
   \label{fig:eurchf}
 \end{figure}
 
@@ -344,14 +338,14 @@ Obserwacje odstające w danych wysokiej częstotliwości przejawiają się na wi
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/singleCT.PNG}
-  \caption{BRN}
+  \caption{Pojedyncza obserwacja pojawiająca się w danych wysokiej częstotliwości.}
   \label{fig:singleCT}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/f6LJ15.PNG}
-  \caption{BRN}
+  \caption{Zanieczyszczony szereg obserwacji wysokiej częstotliwości. Oprócz pojedynczych obserwacji odstających, pojawiają się ich całe serie.}
   \label{fig:f6LJ15}
 \end{figure}
 
@@ -364,14 +358,14 @@ Równie ciekawa sytuacja zaprezentowana jest na rysunku \ref{fig:f6LJ15Row}, na 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/f6mh15.PNG}
-  \caption{BRN}
+  \caption{Seria obserwacji odstających wśród ticków transakcyjnych. Nalży zwrócić uwagę iż wszystkie obserwacje pojawiają się na tym samym poziomie.}
   \label{fig:f6mh15}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/f6LJ15Row.PNG}
-  \caption{BRN}
+  \caption{Serie poziomych (mających tę samą wartość) obserwacji odstających ze względu na bid i ask.}
   \label{fig:f6mh15}
 \end{figure}
 
@@ -382,14 +376,14 @@ Na rysunkach \ref{fig:fCNH15} przedstawiono serię obserwacji odstających idąc
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fCNH15.PNG}
-  \caption{BRN}
+  \caption{Idąca pionowo w górę seria obserwacji odstających, powodująca gwałtowną zmianę ceny po jednej ze stron książki zleceń w bardzo krótkim czasie.}
   \label{fig:fCNH15}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{wykresy/fCNH15ZOOM.PNG}
-  \caption{BRN}
+  \caption{Zbliżenie na sytuację przedstawioną na Rys. \ref{fig:fCNH15}. Seria obserwacji odstających powodująca gwałtowną zmianę ceny pojawiła się w czasie mniej niż jednej sekundy.}
   \label{fig:fCNH15ZOOM}
 \end{figure}
 
@@ -506,15 +500,15 @@ Natomiast \ref{War2} ma na celu wychwycenie sytuacji, w której Bid przewyższa 
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/cross}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/cross}
+  \caption{Możliwa sytuacja w przypadku zastosowania prostego warunku odrzucającego ceny Bid, gdy $Bid > Ask$. W przypadku szybkiego wzrostu ceny (łączącego się ze wzrostem po obu stornach książki zleceń), obserwacje Bid mogą być zawsze odrzucane.}
   \label{fig:Cross}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/relacjaBIDASK}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/relacjaBIDASK}
+  \caption{Możliwa do zaistnienia sytuacja w przypadku skoku ceny i braku pierwszego zabezpieczenia wprowadzonego w filtrze, powodującego sprawdzenie "odstawania" również względem ostatniej odrzuconej obserwacji.}
   \label{fig:JUMP}
 \end{figure}
 
@@ -523,8 +517,8 @@ W linijce \ref{Zab1} spread przeliczany jest powtórnie, jednak z wykorzystaniem
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/nextout}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/nextout}
+  \caption{Sytuacja która może spowodować przyjęcie obserwacji odstającej w oparciu o pierwsze zabezpieczenie. Pierwsza obserwacja Ask zostanie odrzucona, jednak pojawiający się po niej Bid, jeżeli zostanie zweryfikowany względem niej, może zostać przyjęty (spread względem odrzuconej ceny Ask nie odbiega od spreadu pomiędzy wcześniejszymi obserwacjami).}
   \label{fig:NEXTOUT}
 \end{figure}
 
@@ -532,8 +526,8 @@ Linia \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filt
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/longStreak}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/longStreak}
+  \caption{Sytuacja obrazująca motywację wprowadzenia drugiego zabezpieczenia związanego z podnoszeniem ceny Ask po odrzuceniu obserwacji Bid. Dzięki temu w takiej sytuacji tylko część początkowych Bidów zostanie odrzucona. W przeciwnym przypadku odrzucone zostałyby wszystkie obserwacje, aż do pojawienia się końcowej ceny Ask.}
   \label{fig:longStreak}
 \end{figure}
 
@@ -571,8 +565,8 @@ Dodatkowo wprowadzono parametr $\phi_{max}$, określający maksymalny udział ak
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/longTime}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/longTime}
+  \caption{Sytuacja motywująca wprowadzenie maksymalnego udziału nowej obserwacji w średnim spreadzie. W filtrze po długiem okresie, większa wartość jest przypisywana nowej obserwacji, jednak gdyby była zbyt duża, mogłoby dojść do sytuacji przedstawionej na rysunku w której względem starej ceny Ask, spread nowego Bida jest bardzo mały, przez co znacząco zaniżyłby wskazanie średniego spreadu, powodując odrzucenie kolejnych obserwacji Ask (których spread jest podobnej wartości jak przed przerwą w danych).}
   \label{fig:longTime}
 \end{figure}
 
@@ -584,15 +578,15 @@ Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się fi
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/spreadJump}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/spreadJump}
+  \caption{Sytuacja motywująca wprowadzenie trzeciego zabezpieczenia rozszerzającego średni spread po każdej odrzuconej obserwacji. Dzięki temu w przypadku gwałtownego skoku spreadu, po kilkunastu obserwacjach średni spread rozszerzy się na tyle, by zacząć przyjmować nowe obserwacje. W przeciwnym przypadku wszystkie obserwacje z tak powiększonym spreadem zostałby odrzucone, przez co do strategii nie docierałby żadne dane.}
   \label{fig:spreadJump}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=110mm, height=100mm]{wykresy/outSeries}
-  \caption{BRN}
+  \includegraphics[width=85mm, height=80mm]{wykresy/outSeries}
+  \caption{Sytuacja powodująca przyjęcie obserwacji odstających spowodowana trzecim zabezpieczeniem. W przypadku dużej serii obserwacji odstających stopniowe rozszerzanie średniego spreadu sprawi, iż w końcu zostaną one uznane za poprawne.}
   \label{fig:outSeries}
 \end{figure}
 
