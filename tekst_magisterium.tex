@@ -460,10 +460,9 @@ Jednocześnie filtr posiada pewne stałe parametry które muszą zostać ustawio
 \begin{itemize}
 \item $minSpread$ - minimalny spread dla instrumentu.
 \item $SprMulti$ - mnożnik średniego spreadu.
-\item $phi$ - 
-\item $\phi_{min}$ - 
-\item $\phi_{max}$ - 
-\item $rmVal$ - 
+\item $\phi_{min}$ - minimalny udział nowej obserwacji w średnim spreadzie.
+\item $\phi_{max}$ - maksymalny udział nowej obserwacji w średnim spreadzie.
+\item $rmVal$ - wartość korygująca średni spread po odrzuceniu obserwacji.
 \end{itemize}
 
 W listingu \ref{FiltrBID} przedstawiono algorytm filtracji pojedynczej ceny Bid. Algorytm filtracji ceny Ask jest analogiczny, jedyną różnicą są zamienione znaki $leq$ i $req$, dlatego też nie będzie omawiany.
