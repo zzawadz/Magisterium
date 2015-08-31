@@ -16,7 +16,7 @@
 \usepackage{natbib}
 \usepackage{float}
 \usepackage{algorithm2e}
-
+\usepackage{longtable}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{graphicx}
@@ -458,10 +458,12 @@ W algorytmie będą używane następujące oznaczenia:
 Jednocześnie filtr posiada pewne stałe parametry które muszą zostać ustawione:
 
 \begin{itemize}
-\item $minSpread$ Minimalny spread dla instrumentu.
-\item $Multi$ - mnożnik średniego spreadu.
-\item $min\phi$
-\item $rmMulti$
+\item $minSpread$ - minimalny spread dla instrumentu.
+\item $SprMulti$ - mnożnik średniego spreadu.
+\item $phi$ - 
+\item $\phi_{min}$ - 
+\item $\phi_{max}$ - 
+\item $rmVal$ - 
 \end{itemize}
 
 W listingu \ref{FiltrBID} przedstawiono algorytm filtracji pojedynczej ceny Bid. Algorytm filtracji ceny Ask jest analogiczny, jedyną różnicą są zamienione znaki $leq$ i $req$, dlatego też nie będzie omawiany.
@@ -611,39 +613,156 @@ Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględn
 
 \subsection{Wyniki filtrowania}
 
-\begin{table}[ht]
+Do oceny jakości filtrowania wykorzystano dwie miary - \emph{True Positive  Rate} (TPR) i \emph{False Positive Rate}(FPR). TPR zdefiniowano jest jako:
+\begin{equation}
+TPR = \frac{TP}{TP + FN},
+\end{equation}
+gdzie $TP$ określa ilość obserwacji poprawnie sklasyfikowanych jako odstające, a $FN$ liczbę obserwacji odstających które zostały sklasyfikowane jako poprawne. Wartość TPR przedstawia jaki procent wszystkich obserwacji odstających zostało wykrytych. Natomiast FPR zdefiniowano jako:
+\begin{equation}
+TPR = \frac{FP}{FP + TN},
+\end{equation}
+gdzie $FP$ oznacza liczbę obserwacji uznanych za odstające, mimo że nimi nie były. Natomiast $TN$ określa ilość obserwacji które zarówno przez filtr jak i osobę filtrującą dane zostały uznane za poprawne. Wyniki dla trzech różnych wartości mnożnika spreadu przedstawiono przedstawiono w tabeli \ref{tab:result1}. Zawiera ona średnie wartości TPR i FPR dla kolejnych serii kontraktów na poszczególny instrument finansowy. Pozostałe parametry użyte w procesie filtracji zaprezentowano w tabeli \ref{tab:params}. Należy zwrócić uwagę, iż modyfikacja tych parametrów nie ma aż takiego wpływu na działanie filtra jak zmiana mnożnika $SprMulti$.
+
+\begin{table}
 \centering
-\tiny
-\begin{tabular}{rlrrrrrrrrr}
-  \hline
- & Seria & TickNo & TPR & Lost & Human & Filter & truePositive & falsePositive & trueNegative & falseNegative \\ 
-  \hline
-1 & fBRN.H08 & 21523671 & 0.43 & 0.00 & 297821 & 174236 & 129284 & 44952 & 21180898 & 168537 \\ 
-  2 & fBRN.J08 & 20802862 & 0.67 & 0.00 & 283108 & 221869 & 190213 & 31656 & 20488098 & 92895 \\ 
-  3 & fBRN.K08 & 20166984 & 0.71 & 0.01 & 108499 & 209742 & 77546 & 132196 & 19926289 & 30953 \\ 
-  4 & fBRN.M08 & 30427759 & 0.44 & 0.01 & 668057 & 505605 & 291417 & 214188 & 29545514 & 376640 \\ 
-  5 & fBRN.N08 & 21458109 & 0.67 & 0.00 & 178878 & 182275 & 119537 & 62738 & 21216493 & 59341 \\ 
-  6 & fBRN.Q08 & 24035220 & 0.40 & 0.00 & 174984 & 107504 & 70164 & 37340 & 23822896 & 104820 \\ 
-  7 & fBRN.U08 & 24084073 & 0.53 & 0.00 & 249600 & 138362 & 131474 & 6888 & 23827585 & 118126 \\ 
-  8 & fBRN.G09 & 24565558 & 0.62 & 0.00 & 221617 & 183689 & 136904 & 46785 & 24297156 & 84713 \\ 
-  9 & fBRN.H09 & 26606786 & 0.75 & 0.00 & 175910 & 206622 & 131895 & 74727 & 26356149 & 44015 \\ 
-  10 & fBRN.J09 & 26653349 & 0.36 & 0.00 & 56063 & 41639 & 20359 & 21280 & 26576006 & 35704 \\ 
-  11 & fBRN.K09 & 28360353 & 0.50 & 0.00 & 45984 & 44625 & 22765 & 21860 & 28292509 & 23219 \\ 
-  12 & fBRN.M09 & 33582091 & 0.43 & 0.01 & 611345 & 522635 & 264093 & 258542 & 32712204 & 347252 \\ 
-  13 & fBRN.N09 & 29684695 & 0.64 & 0.00 & 88022 & 58461 & 55918 & 2543 & 29594130 & 32104 \\ 
-  14 & fBRN.Q09 & 28452402 & 0.76 & 0.00 & 30401 & 37577 & 23162 & 14415 & 28407586 & 7239 \\ 
-  15 & fBRN.U09 & 27883001 & 0.64 & 0.00 & 43568 & 56658 & 27942 & 28716 & 27810717 & 15626 \\ 
-  16 & fBRN.F10 & 35379700 & 0.79 & 0.00 & 270764 & 253192 & 212995 & 40197 & 35068739 & 57769 \\ 
-  17 & fBRN.G10 & 30056885 & 0.46 & 0.00 & 24905 & 148061 & 11420 & 136641 & 29895339 & 13485 \\ 
-  18 & fBRN.H10 & 27493957 & 0.42 & 0.00 & 39781 & 87534 & 16537 & 70997 & 27383179 & 23244 \\ 
-  19 & fBRN.J10 & 28789596 & 0.25 & 0.00 & 23763 & 99018 & 5956 & 93062 & 28672771 & 17807 \\ 
-  20 & fBRN.K10 & 35233611 & 0.42 & 0.00 & 134734 & 180468 & 56414 & 124054 & 34974823 & 78320 \\ 
-  21 & fBRN.N10 & 46521834 & 0.40 & 0.00 & 396880 & 163747 & 159517 & 4230 & 46120724 & 237363 \\ 
-   \hline
+\begin{tabular}{|c|c|}
+\hline
+Parametr & Wartość \\
+\hline
+$minSpread$ & $2 \cdot TickSize$ \\
+$\phi_{min}$ & 80\% \\
+$\phi_{max}$ & 95\% \\
+$rmVal$ & $0.25 \cdot TickSize$\\
+\hline
 \end{tabular}
+\label{tab:params}
+\caption{Parametry filtra wykorzystane w symulacjach.}
 \end{table}
 
+
+\begin{longtable}{llll}
+  \hline
+Symbol & Mnożnik 2 & Mnożnik 2.5 & Mnożnik 3 \\ 
+  \hline
+ OrangeJuice & 82.39\%/2.63\% & 79.65\%/0.92\% & 76.95\%/0.34\% \\ 
+  Silver & 79.89\%/0.18\% & 76.96\%/0.09\% & 73.2\%/0.07\% \\ 
+  Palladium & 68.29\%/2.3\% & 63.31\%/1.28\% & 62.03\%/0.95\% \\ 
+  SwedishKrone & 66.34\%/0.61\% & 61.47\%/0.38\% & 56.19\%/0.31\% \\ 
+  Rand & 64.39\%/1.64\% & 51.57\%/0.99\% & 44.06\%/0.77\% \\ 
+  Coffee & 62.68\%/0.47\% & 56.69\%/0.24\% & 50.73\%/0.15\% \\ 
+  Ruble & 61.66\%/0.65\% & 53.65\%/0.36\% & 47.86\%/0.18\% \\ 
+  miniDJIA & 61.56\%/0.02\% & 57.2\%/0.01\% & 52.23\%/0\% \\ 
+  Brent & 59.71\%/0.33\% & 52.99\%/0.18\% & 47.73\%/0.11\% \\ 
+  Copper & 58.54\%/4.76\% & 49.91\%/4.01\% & 43.8\%/3.81\% \\ 
+  EURJPY & 57.53\%/0.05\% & 46.79\%/0.02\% & 37.66\%/0.01\% \\ 
+  NorwegianKrone & 57.46\%/0.68\% & 49.48\%/0.59\% & 43.28\%/0.52\% \\ 
+  LongGilt & 56.2\%/0.1\% & 53.08\%/0.1\% & 50.62\%/0.07\% \\ 
+  Milk & 55.93\%/2.75\% & 47.35\%/0.78\% & 37.52\%/0.24\% \\ 
+  EuroStoxx & 55.89\%/0.11\% & 53.56\%/0.11\% & 53.09\%/0.11\% \\ 
+  EURGBP & 54.38\%/0.24\% & 44.42\%/0.09\% & 36.88\%/0.06\% \\ 
+  Cocoa & 53.98\%/0.42\% & 49.5\%/0.28\% & 45.7\%/0.25\% \\ 
+  miniGold & 53.16\%/0.51\% & 46.56\%/0.38\% & 43.18\%/0.35\% \\ 
+  Real & 52.5\%/0.4\% & 40.36\%/0.16\% & 30.33\%/0.13\% \\ 
+  Euro & 52.46\%/0.23\% & 43.17\%/0.05\% & 41.7\%/0.01\% \\ 
+  Rice & 52.43\%/3.8\% & 45.81\%/1.3\% & 38.75\%/0.7\% \\ 
+  BritishPound & 52.33\%/0.56\% & 47.66\%/0.17\% & 42.35\%/0.04\% \\ 
+  VStoxxVolIdx & 50\%/0.08\% & 33.33\%/0.02\% & 22.22\%/0\% \\ 
+  HeatingOil & 49.04\%/0.96\% & 37.31\%/0.44\% & 32.54\%/0.29\% \\ 
+  Sugar & 48.51\%/1.15\% & 35.85\%/0.09\% & 28.43\%/0.05\% \\ 
+  AusDollar & 47.99\%/1.79\% & 43.53\%/0.67\% & 41.21\%/0.24\% \\ 
+  EURCHF & 47.91\%/0.03\% & 38.16\%/0.01\% & 29.86\%/0\% \\ 
+  Lumber & 47.28\%/2.43\% & 39.81\%/0.65\% & 33.21\%/0.25\% \\ 
+  Nikkei\_SIMX\_JPY & 46.97\%/0.12\% & 43.02\%/0.08\% & 39.25\%/0.07\% \\ 
+  US10YNote & 46.94\%/0\% & 33.65\%/0\% & 26.41\%/0\% \\ 
+  OMX25 & 46.32\%/0.85\% & 39.2\%/0.44\% & 34.22\%/0.29\% \\ 
+  CnxNiftyIndia & 46.19\%/3\% & 40.41\%/2.33\% & 35.75\%/2.13\% \\ 
+  Platinum & 45.89\%/3.87\% & 37.57\%/3.03\% & 33.29\%/2.65\% \\ 
+  EuroDollar & 45.08\%/0.44\% & 38.72\%/0.13\% & 33.21\%/0.04\% \\ 
+  Nikkei & 44.89\%/0.02\% & 35.79\%/0.01\% & 30.46\%/0.01\% \\ 
+  CrudeOil & 44.09\%/0.26\% & 35.99\%/0.14\% & 31.55\%/0.1\% \\ 
+  Russel2000 & 43.87\%/0.14\% & 37.16\%/0.12\% & 32.92\%/0.12\% \\ 
+  US5Note & 43.7\%/0\% & 26.49\%/0\% & 19.8\%/0\% \\ 
+  Peso & 42.23\%/0.02\% & 31.75\%/0\% & 24.44\%/0\% \\ 
+  JapYen & 42.2\%/0.32\% & 35.52\%/0.07\% & 33.02\%/0.03\% \\ 
+  LiveCattle & 41.74\%/0.73\% & 35.31\%/0.21\% & 28.99\%/0.08\% \\ 
+  US2Note & 41.39\%/0\% & 35.68\%/0\% & 31.95\%/0\% \\ 
+  CanDollar & 40.63\%/0.12\% & 33.46\%/0.05\% & 26.28\%/0.02\% \\ 
+  Euribor & 40.31\%/0.35\% & 33.18\%/0.22\% & 28.34\%/0.15\% \\ 
+  USTBond & 37.27\%/0.01\% & 30.8\%/0.01\% & 24.88\%/0\% \\ 
+  miniSilver & 36.89\%/10.99\% & 33.17\%/10.83\% & 30.02\%/10.76\% \\ 
+  SwissFranc & 36.49\%/0.16\% & 29.03\%/0.09\% & 24.35\%/0.04\% \\ 
+  BEL20 & 36.16\%/0.3\% & 27.09\%/0.11\% & 20.56\%/0.04\% \\ 
+  FeederCattle & 35.51\%/0.92\% & 27.09\%/0.2\% & 20.35\%/0.06\% \\ 
+  EminiNasdaq & 35.31\%/0.09\% & 28.45\%/0.03\% & 22.37\%/0.01\% \\ 
+  NatGas & 35.09\%/0.63\% & 27.4\%/0.17\% & 22.32\%/0.06\% \\ 
+  Corn & 33.8\%/0.05\% & 29.04\%/0.02\% & 26.04\%/0.01\% \\ 
+  MSCITaiwan & 32.11\%/0.11\% & 28.65\%/0.05\% & 26.86\%/0.03\% \\ 
+  SoybeanOil & 31.86\%/0.51\% & 25.87\%/0.25\% & 21.17\%/0.17\% \\ 
+  VIX & 31.64\%/0.14\% & 25.55\%/0.08\% & 21.63\%/0.06\% \\ 
+  NZDollar & 31.5\%/0.1\% & 24.79\%/0.03\% & 20.3\%/0.01\% \\ 
+  LeanHogs & 29.56\%/0.63\% & 21.97\%/0.19\% & 16.12\%/0.08\% \\ 
+  SoybeanMeal & 24.19\%/0.41\% & 18.9\%/0.24\% & 15.11\%/0.19\% \\ 
+  MSCISingapore & 24.12\%/0.18\% & 19.82\%/0.09\% & 17.75\%/0.07\% \\ 
+  MDAX & 22.84\%/0.37\% & 14.98\%/0.16\% & 10.27\%/0.05\% \\ 
+  Soybean & 21.71\%/0.11\% & 17.2\%/0.05\% & 14.78\%/0.03\% \\ 
+  miniJGB & 21.66\%/0.24\% & 17.92\%/0.08\% & 15.16\%/0.04\% \\ 
+  Wheat & 21.52\%/0.19\% & 16.51\%/0.08\% & 13.54\%/0.05\% \\ 
+  SMI & 18.5\%/0.36\% & 16.52\%/0.59\% & 14.29\%/0.39\% \\ 
+  EuroSwiss & 17.92\%/0.05\% & 13.89\%/0.02\% & 11.5\%/0.01\% \\ 
+  ShortSterling & 15.43\%/0.01\% & 12.59\%/0.01\% & 10.69\%/0\% \\ 
+   \hline
+   \caption{Średnie wyniki dla współczynników TPR i FPR w zależności od mnożnika średniego spreadu. Wartości podano w postaci \emph{TPR/FPR}.}
+\label{tab:result1}
+
+\end{longtable}
+
+{\scriptsize
+\begin{longtable}{lrllrrrrrr}
+  \hline
+Series & TickNo & TPR & FPR & Human & Filter & TP & FP & TN & FN \\ 
+  \hline
+  fOJ.F09 & 129368 & 92.33\% & 3.95\% & 2202 & 7145 & 2033 & 5112 & 122054 & 169 \\ 
+  fOJ.H09 & 124745 & 97.91\% & 3.88\% & 2675 & 7464 & 2619 & 4845 & 117225 &  56 \\ 
+  fOJ.K09 & 121813 & 75.57\% & 3.19\% & 3929 & 6853 & 2969 & 3884 & 114000 & 960 \\ 
+  fOJ.N09 & 125683 & 97.79\% & 3.08\% & 1629 & 5459 & 1593 & 3866 & 120188 &  36 \\ 
+  fOJ.U09 & 147274 & 92.37\% & 2.71\% & 2594 & 6381 & 2396 & 3985 & 140695 & 198 \\ 
+  fOJ.X09 & 165710 & 87.67\% & 3.17\% & 3010 & 7898 & 2639 & 5259 & 157441 & 371 \\ 
+  fOJ.F10 & 167922 & 98.28\% & 3.22\% & 2029 & 7395 & 1994 & 5401 & 160492 &  35 \\ 
+  fOJ.H10 & 153285 & 94.34\% & 3.34\% & 1554 & 6588 & 1466 & 5122 & 146609 &  88 \\ 
+  fOJ.K10 & 201806 & 94.9\% & 5.96\% & 3548 & 15386 & 3367 & 12019 & 186239 & 181 \\ 
+  fOJ.N10 & 241420 & 88.94\% & 4.31\% & 3517 & 13523 & 3128 & 10395 & 227508 & 389 \\ 
+  fOJ.U10 & 268211 & 92.27\% & 3.16\% & 4076 & 12238 & 3761 & 8477 & 255658 & 315 \\ 
+  fOJ.X10 & 293368 & 95.13\% & 2.22\% & 3944 & 10279 & 3752 & 6527 & 282897 & 192 \\ 
+  fOJ.F11 & 237612 & 91.96\% & 2.56\% & 1144 & 7144 & 1052 & 6092 & 230376 &  92 \\ 
+  fOJ.H11 & 264521 & 92.83\% & 2.37\% & 1200 & 7370 & 1114 & 6256 & 257065 &  86 \\ 
+  fOJ.K11 & 315312 & 91.1\% & 2.09\% & 1506 & 7962 & 1372 & 6590 & 307216 & 134 \\ 
+  fOJ.N11 & 337454 & 14.97\% & 2.06\% & 13524 & 8960 & 2024 & 6936 & 316994 & 11500 \\ 
+  fOJ.U11 & 343042 & 88.84\% & 2.22\% & 2706 & 10006 & 2404 & 7602 & 332734 & 302 \\ 
+  fOJ.X11 & 371761 & 79.33\% & 3\% & 3121 & 13614 & 2476 & 11138 & 357502 & 645 \\ 
+  fOJ.F12 & 367994 & 60.72\% & 2.92\% & 2678 & 12382 & 1626 & 10756 & 354560 & 1052 \\ 
+  fOJ.H12 & 484820 & 90.86\% & 2.41\% & 1597 & 13152 & 1451 & 11701 & 471522 & 146 \\ 
+  fOJ.K12 & 474927 & 84.96\% & 2.92\% & 1735 & 15333 & 1474 & 13859 & 459333 & 261 \\ 
+  fOJ.N12 & 570145 & 66.34\% & 2.75\% & 4857 & 18928 & 3222 & 15706 & 549582 & 1635 \\ 
+  fOJ.U12 & 590878 & 83.01\% & 1.7\% & 3397 & 12856 & 2820 & 10036 & 577445 & 577 \\ 
+  fOJ.X12 & 593707 & 79.28\% & 1.84\% & 3075 & 13369 & 2438 & 10931 & 579701 & 637 \\ 
+  fOJ.F13 & 547480 & 90.25\% & 3.85\% & 5517 & 26039 & 4979 & 21060 & 520903 & 538 \\ 
+  fOJ.H13 & 530403 & 91.86\% & 1.97\% & 3085 & 13306 & 2834 & 10472 & 516846 & 251 \\ 
+  fOJ.K13 & 626903 & 91.26\% & 1.84\% & 2928 & 14222 & 2672 & 11550 & 612425 & 256 \\ 
+  fOJ.N13 & 644318 & 86.39\% & 1.54\% & 3783 & 13203 & 3268 & 9935 & 630600 & 515 \\ 
+  fOJ.U13 & 609580 & 88.9\% & 3.73\% & 3569 & 25893 & 3173 & 22720 & 583291 & 396 \\ 
+  fOJ.X13 & 590440 & 94.28\% & 1.35\% & 7358 & 14920 & 6937 & 7983 & 575099 & 421 \\ 
+   \hline
+\hline
+\caption{Przedstawienie surowych wyników dla wybranych kontraktów na sok pomarańczowy (Orange Juice).}
+\label{tab:result2}
+\end{longtable}}
+
+
 \subsection{Problemy filtra} 
+
+\section{Podsumowanie}
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{literatura_mag}
