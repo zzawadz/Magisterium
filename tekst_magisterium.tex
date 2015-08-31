@@ -41,7 +41,6 @@
 %\usepackage{pst-plot} % For axes
 %
 
-
 \newgeometry{tmargin=2.5cm, bmargin=2.5cm, lmargin=2cm, rmargin=2cm}
 \doublespacing
 \addcontentsline{toc}{chapter}{Wstęp}
@@ -70,20 +69,8 @@ Specjalność: Modelowanie i Prognozowanie}
 
 \maketitle
 
-%\clearpage
-%\newlength\longest
-%\thispagestyle{empty}
-%\null\vfill
-%
-%\settowidth\longest{\huge\itshape just as his inclination leads him;}
-%\centering
-%\parbox{\longest}{%
-%  \raggedright{\large%
-%  Praca ta nie powstałaby bez wsparcia ze strony Metrum Capital. Szczególne podziękowania należą się Michałowi Pruskiemu, Przemysławowi Sępowi i Annie Homie.
-%  \par\bigskip
-%  }   
-% % \raggedleft\Large\MakeUppercase{Samuel Johnson}\par%
-%}
+
+Powstanie tej pracy nie byłoby możliwe bez wsparcia Metrum Capital. Coś tu jeszcze ładnego napiszę:)
 
 \tableofcontents
 \chapter*{Wstęp}
@@ -604,13 +591,15 @@ Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się fi
 
 \chapter{Ocena działania filtra}
 
+\section{Metodologia}
+
 Kluczową sprawą w testowaniu działania filtra danych jest możliwość stworzenia stosownego środowiska testowego, które w wiarygodny sposób symuluje rzeczywiste zachowanie się książki zleceń. W takim środowisku obserwacje odstające znane są apriori (tzn. wiadomo którą obserwację proces symulujący książkę zleceń wygenerował jako odstającą). W takim środowisku ocena jakości filtra może być przeprowadzona w oparciu o ilość odrzuconych obserwacji, które w rzeczywistości nie były odstające, jak również ilość zaakceptowanych obserwacji odstających.
 
 Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Co więcej, żaden z prezentowanych w literaturze modeli nie uwzględnia możliwości pojawienia się obserwacji odstających w książce zleceń, jak również zdaniem autora nie uwzględnia w wystarczający sposób charakterystyki kontraktów terminowych (różnice w płynności w trakcie życia kontraktu). 
 
 Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględnia w sobie specyfikę kontraktów terminowych, jak również złożone charakterystyki możliwych ścieżek obserwacji odstających dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych. W pierwszej fazie przeprowadzono subiektywne, ręczne czyszczenie rzeczywistych danych. Następnie wyniki czyszczenia ręcznego zostały porównane z czyszczeniem z wykorzystaniem filtra. 
 
-\subsection{Wyniki filtrowania}
+\section{Wyniki filtrowania}
 
 Do oceny jakości filtrowania wykorzystano dwie miary - \emph{True Positive  Rate} (TPR) i \emph{False Positive Rate}(FPR). TPR zdefiniowano jest jako:
 \begin{equation}
@@ -787,11 +776,28 @@ fZW.H10 & 12937149 & 16.43\% & 0.05\% & 74144 & 19189 & 12181 & 7008 & 12855997 
 \label{tab:result3}
 \end{longtable}}
 
-\subsection{Problemy filtra} 
 
-\section{Podsumowanie}
+Filtr generalnie dobrze radzi sobie w przypadkach w których obserwacje odstające pojawiają się pojedynczo (por. rys. \ref{fig:ojfh10}), natomiast w zupełności nie radzi sobie w przypadku poziomych i pionowych ścieżek obserwacji odstających (por. rys. \ref{fig:fzwh11}). Co więcej występowanie ścieżek obserwacji odstających w dużym stopniu zaburza wskazania wskaźnika TPR.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/ojfh10.PNG}
+  \caption{Aktywność w trakcie trwania sesji.}
+  \label{fig:ojfh10}
+\end{figure}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/fzwh11.PNG}
+  \caption{Aktywność w trakcie trwania sesji.}
+  \label{fig:fzwh11}
+\end{figure}
+
+\chapter{Podsumowanie}
+
+W pracy przedstawiono zagadnienie budowy rzetelnych danych finansowych, które mogą zostać użyte zarówno w testach algorytmicznej strategii inwestycyjnej, jak również w handlu rzeczywistych. Przedstawiono empiryczne obserwacje przemawiające za występowaniem obserwacji odstających w finansowych danych wysokiej częstotliwości, które mogą zaburzyć wszystkie procedury weryfikacji strategii. Również w tym kontekście została omówiona możliwość wykorzystania metod statystyki odpornej w handlu algorytmicznym do radzenia sobie z tego typu obserwacjami. Niestety mimo bardzo pożądanych własności statystycznych prezentowanych przez procedury odporne, często nie mogą one zostać wykorzystane z uwagi na zbyt dużą złożoność obliczeniową, jak również wymóg konsekwencji stosowania procedur odpornych w każdym module strategii (generowanie sygnałów, zarządzanie ryzykiem, etc.).
+
+Przedstawiono również implementację prostego filtru usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu. W takim systemie poszczególne części powinny być odpowiedzialne za eliminację różnorodnych sposobów realizacji procesu odstawania pojawiających się w danych wysokiej częstotliwości. W dalszych pracach należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających, z którymi prezentowany filtr sobie nie radzi.
 
 \bibliographystyle{plainnat}
 \bibliography{literatura_mag}
