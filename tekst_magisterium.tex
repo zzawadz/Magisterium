@@ -593,7 +593,7 @@ Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się fi
 
 \section{Metodologia}
 
-Kluczową sprawą w testowaniu działania filtra danych jest możliwość stworzenia stosownego środowiska testowego, które w wiarygodny sposób symuluje rzeczywiste zachowanie się książki zleceń. W takim środowisku obserwacje odstające znane są apriori (tzn. wiadomo którą obserwację proces symulujący książkę zleceń wygenerował jako odstającą). W takim środowisku ocena jakości filtra może być przeprowadzona w oparciu o ilość odrzuconych obserwacji, które w rzeczywistości nie były odstające, jak również ilość zaakceptowanych obserwacji odstających.
+Kluczową sprawą w testowaniu działania filtra danych jest możliwość stworzenia stosownego środowiska testowego, które w wiarygodny sposób symuluje rzeczywiste zachowanie się książki zleceń. W takim środowisku obserwacje odstające znane są apriori (tzn. wiadomo którą obserwację proces symulujący książkę zleceń wygenerował jako odstającą), wtedy ocena jakości filtra może być przeprowadzona w oparciu o ilość odrzuconych obserwacji, które w rzeczywistości nie były odstające, jak również ilość zaakceptowanych obserwacji odstających.
 
 Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Co więcej, żaden z prezentowanych w literaturze modeli nie uwzględnia możliwości pojawienia się obserwacji odstających w książce zleceń, jak również zdaniem autora nie uwzględnia w wystarczający sposób charakterystyki kontraktów terminowych (różnice w płynności w trakcie życia kontraktu). 
 
@@ -601,18 +601,9 @@ Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględn
 
 \section{Wyniki filtrowania}
 
-Do oceny jakości filtrowania wykorzystano dwie miary - \emph{True Positive  Rate} (TPR) i \emph{False Positive Rate}(FPR). TPR zdefiniowano jest jako:
-\begin{equation}
-TPR = \frac{TP}{TP + FN},
-\end{equation}
-gdzie $TP$ określa ilość obserwacji poprawnie sklasyfikowanych jako odstające, a $FN$ liczbę obserwacji odstających które zostały sklasyfikowane jako poprawne. Wartość TPR przedstawia jaki procent wszystkich obserwacji odstających zostało wykrytych. Natomiast FPR zdefiniowano jako:
-\begin{equation}
-TPR = \frac{FP}{FP + TN},
-\end{equation}
-gdzie $FP$ oznacza liczbę obserwacji uznanych za odstające, mimo że nimi nie były. Natomiast $TN$ określa ilość obserwacji które zarówno przez filtr jak i osobę filtrującą dane zostały uznane za poprawne. Wyniki dla trzech różnych wartości mnożnika spreadu przedstawiono przedstawiono w tabeli \ref{tab:result1}. Zawiera ona średnie wartości TPR i FPR dla kolejnych serii kontraktów na poszczególny instrument finansowy. Pozostałe parametry użyte w procesie filtracji zaprezentowano w tabeli \ref{tab:params}. Należy zwrócić uwagę, iż modyfikacja tych parametrów nie ma aż takiego wpływu na działanie filtra jak zmiana mnożnika $SprMulti$.
-
 \begin{table}
 \centering
+
 \begin{tabular}{|c|c|}
 \hline
 Parametr & Wartość \\
@@ -623,10 +614,22 @@ $\phi_{max}$ & 95\% \\
 $rmVal$ & $0.25 \cdot TickSize$\\
 \hline
 \end{tabular}
-\label{tab:params}
 \caption{Parametry filtra wykorzystane w symulacjach.}
+\label{params2}
 \end{table}
 
+Do oceny jakości filtrowania wykorzystano dwie miary - \emph{True Positive  Rate} (TPR) i \emph{False Positive Rate}(FPR). TPR zdefiniowano jest jako:
+\begin{equation}
+TPR = \frac{TP}{TP + FN},
+\end{equation}
+gdzie $TP$ określa ilość obserwacji poprawnie sklasyfikowanych jako odstające, a $FN$ liczbę obserwacji odstających które zostały sklasyfikowane jako poprawne. Wartość TPR przedstawia jaki procent wszystkich obserwacji odstających został wykryty. Natomiast FPR zdefiniowano jako:
+\begin{equation}
+TPR = \frac{FP}{FP + TN},
+\end{equation}
+gdzie $FP$ oznacza liczbę obserwacji uznanych za odstające, mimo że nimi nie były. Natomiast $TN$ określa ilość obserwacji, które zarówno przez filtr jak i osobę filtrującą dane zostały uznane za poprawne. Wyniki dla trzech różnych wartości mnożnika spreadu przedstawiono w tabeli \ref{tab:result1}. Zawiera ona średnie wartości TPR i FPR dla kolejnych serii kontraktów na poszczególny instrument finansowy. Pozostałe parametry użyte w procesie filtracji zaprezentowano w tabeli \ref{params2}. Należy zwrócić uwagę, iż modyfikacja tych parametrów nie ma aż takiego wpływu na działanie filtra jak zmiana mnożnika $SprMulti$.
+
+
+Filtr generalnie dobrze radzi sobie w sytuacjach, w których obserwacje odstające pojawiają się pojedynczo (por. rys. \ref{fig:ojfh10}), natomiast w zupełności nie radzi sobie w przypadku poziomych i pionowych ścieżek obserwacji odstających (por. rys. \ref{fig:fzwh11}). Co więcej występowanie ścieżek obserwacji odstających w dużym stopniu zaburza wskazania TPR. Założenia na których opiera się filtr wymagają by był on samonaprawialny, to znaczy, by nie było możliwości, że jakiekolwiek zdarzenie na rynku (np. gwałtowny skok spreadu) spowoduje, że wszystkie kolejne obserwacje zostaną odrzucone. By wymusić takie zachowanie, zastosowano zabezpieczenie rozszerzające spread w sytuacji odrzucenia obserwacji. W przypadku pojedynczej obserwacji odstającej nie jest to problemem, gdyż chwilowe rozszerzenie spreadu zostanie praktycznie natychmiast zmniejszone wraz z kolejną, poprawną obserwacją. Jednak w wypadku serii obserwacji odstających powoduje to, iż część obserwacji z takiej serii może (po odpowiednio dużym rozszerzeniu spreadu)zostać zaakceptowana jako poprawna. Co więcej, jeżeli rozszerzanie się spreadu, powodujące w konsekwencji pojawienie się obserwacji odstających odbywa się w dosyć płynny sposób (odległości pomiędzy kolejnymi tickami nie są duże), wtedy żadna z obserwacji nie zostanie uznana za odstającą (do takiej sytuacji doszło na rysunku \ref{fig:fzwh11}). Jednocześnie należy zwrócić uwagę, że serie obserwacji odstających mogą składać się nawet z kilkuset punktów, więc jeżeli dla danego instrumentu typowym sposobem realizacji odstawania są serie obserwacji odstających, to TPR dla proponowanego filtru będzie bardzo niski. 
 
 \begin{longtable}{llll}
   \hline
@@ -704,6 +707,22 @@ Symbol & Mnożnik 2 & Mnożnik 2.5 & Mnożnik 3 \\
 
 \end{longtable}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/ojfh10.PNG}
+  \caption{Obserwacje odstające dla kontraktu na sok pomarańczowy. Kolorem cyjanowym zaznaczono obserwacje, które zostały oznaczone jako obserwacje odstające zarówno przez analityka, jak również filtr.}
+  \label{fig:ojfh10}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{wykresy/fzwh11.PNG}
+  \caption{Ścieżka obserwacji odstających na kontrakcie na pszenicę. Kolorem czerwonym zaznaczono obserwacje, które zostały oznaczone przez analityka jako odstające, w przypadku których filtr określił je jako poprawne. Należy zwrócić uwagę, że odstępy pomiędzy kolejnymi obserwacjami są niezbyt duże, dlatego też średni spread z każdą obserwacją powoli się rozszerza, co prowadzi do przepuszczenia praktycznie całej serii obserwacji odstających.}
+  \label{fig:fzwh11}
+\end{figure}
+
+W tabelach \ref{tab:result2}, i \ref{tab:result3} zaprezentowano wybrane, surowe wyniki dotyczące kolejnych serii kontraktów terminowych na sok pomarańczowy i pszenicę. O ile w przypadku soku pomarańczowego filtr radził sobie dosyć dobrze (usuwał ok 82\% pojawiających się obserwacji odstających), to w przypadku pszenicy jakość działania filtru była dużo gorsza (w żadnym przypadku nie przekroczył 30\% usuniętych obserwacji odstających). Analiza wyników działania filtra pozwala więc sądzić, iż w przypadku soku pomarańczowego mamy raczej do czynienia z pojedynczymi obserwacjami odstającymi, natomiast dla pszenicy dominują serie tego typu obserwacji.
+
 {\scriptsize
 \begin{longtable}{lrllrrrrrr}
   \hline
@@ -772,32 +791,20 @@ fZW.H10 & 12937149 & 16.43\% & 0.05\% & 74144 & 19189 & 12181 & 7008 & 12855997 
   fZW.Z13 & 21169168 & 13.15\% & 0.08\% & 110940 & 32250 & 14586 & 17664 & 21040564 & 96354 \\ 
    \hline
 \hline
-\caption{Przedstawienie surowych wyników dla wybranych kontraktów na sok pomarańczowy (Wheat).}
+\caption{Przedstawienie surowych wyników dla wybranych kontraktów na pszenicę (Wheat).}
 \label{tab:result3}
 \end{longtable}}
 
 
-Filtr generalnie dobrze radzi sobie w przypadkach w których obserwacje odstające pojawiają się pojedynczo (por. rys. \ref{fig:ojfh10}), natomiast w zupełności nie radzi sobie w przypadku poziomych i pionowych ścieżek obserwacji odstających (por. rys. \ref{fig:fzwh11}). Co więcej występowanie ścieżek obserwacji odstających w dużym stopniu zaburza wskazania wskaźnika TPR.
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.5]{wykresy/ojfh10.PNG}
-  \caption{Aktywność w trakcie trwania sesji.}
-  \label{fig:ojfh10}
-\end{figure}
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.5]{wykresy/fzwh11.PNG}
-  \caption{Aktywność w trakcie trwania sesji.}
-  \label{fig:fzwh11}
-\end{figure}
+
 
 \chapter{Podsumowanie}
 
-W pracy przedstawiono zagadnienie budowy rzetelnych danych finansowych, które mogą zostać użyte zarówno w testach algorytmicznej strategii inwestycyjnej, jak również w handlu rzeczywistych. Przedstawiono empiryczne obserwacje przemawiające za występowaniem obserwacji odstających w finansowych danych wysokiej częstotliwości, które mogą zaburzyć wszystkie procedury weryfikacji strategii. Również w tym kontekście została omówiona możliwość wykorzystania metod statystyki odpornej w handlu algorytmicznym do radzenia sobie z tego typu obserwacjami. Niestety mimo bardzo pożądanych własności statystycznych prezentowanych przez procedury odporne, często nie mogą one zostać wykorzystane z uwagi na zbyt dużą złożoność obliczeniową, jak również wymóg konsekwencji stosowania procedur odpornych w każdym module strategii (generowanie sygnałów, zarządzanie ryzykiem, etc.).
+W pracy przedstawiono zagadnienie budowy rzetelnych danych finansowych, które mogą zostać użyte zarówno w testach algorytmicznej strategii inwestycyjnej, jak również w handlu rzeczywistym. Przedstawiono empiryczne obserwacje przemawiające za występowaniem obserwacji odstających w finansowych danych wysokiej częstotliwości, które mogą zaburzyć wszystkie procedury weryfikacji strategii. Również w tym kontekście została omówiona możliwość wykorzystania metod statystyki odpornej w handlu algorytmicznym do radzenia sobie z tego typu obserwacjami. Niestety mimo bardzo pożądanych własności statystycznych prezentowanych przez procedury odporne, często nie mogą one zostać wykorzystane z uwagi na zbyt dużą złożoność obliczeniową, jak również wymóg konsekwencji stosowania procedur odpornych w każdym module strategii (generowanie sygnałów, zarządzanie ryzykiem, etc.).
 
-Przedstawiono również implementację prostego filtru usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu. W takim systemie poszczególne części powinny być odpowiedzialne za eliminację różnorodnych sposobów realizacji procesu odstawania pojawiających się w danych wysokiej częstotliwości. W dalszych pracach należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających, z którymi prezentowany filtr sobie nie radzi.
+Przedstawiono również implementację prostego filtru usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu filtrów. W dalszych pracach, by uzupełnić działanie filtru, należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających
 
 \bibliographystyle{plainnat}
 \bibliography{literatura_mag}
