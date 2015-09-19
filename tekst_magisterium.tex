@@ -61,7 +61,7 @@ Specjalność: Modelowanie i Prognozowanie}
 \title{Filtracja danych wysokiej częstotliwości}
 %\dedication{Rodzicom}
 %\subtitle{Short but sweet?}
-\publishers{{\Large Opiekun naukowy: dr hab. Daniel Kosiorowski}}
+\publishers{{\Large Opiekun naukowy: prof. UEK dr hab. Daniel Kosiorowski}}
 \vskip2mm
 \date{Kraków, 2015}
 \end{titlepage}
@@ -144,10 +144,15 @@ W niniejszej pracy analiza została ograniczona jedynie do pierwszego poziomu ks
 Bid Size 	 Price
 \end{lstlisting}
 
+\section{Źródło finansowych danych wysokiej częstotliwości}
+
+Finansowe dane wysokiej częstotliwości  - \emph{HFD} (High-frequency Financial Data - ang. finansowe dane wysokiej częstotliwości) kojarzone są głównie z handlem wysokiej częstotliwości (HFT - ang. High-frequency Trading), w którym pozycje trzymane są w bardzo krótkich interwałach czasowych, często nieprzekraczających jednej sekundy. W takim przypadku zwrot z pojedynczej transakcji jest bardzo niski (opiera się na zmianie ceny w okresie co najwyżej kilku sekund). Z tego powodu inwestor stosujący tego typu podejście, by osiągnąć sensowną rentowność musi dokonywać bardzo wielu tego typu transakcji, co łączy się z bardzo dużą ilością składanych zleceń. Same finansowe dane wysokiej częstotliwości, to właśnie informacje o każdym pojawiającym się na rynku zleceniu kupna i sprzedaży. 
+
+Pojawienie się terminu ''finansowe dane wysokiej częstotliwości'' związane jest jednak nie z działaniem funduszy HFT, tylko wzrostu zainteresowania rynkiem finansowym, jak również jego komputeryzacją. Sam wzrost liczby inwestorów spowodował zwiększenie ilości składanych zleceń, a przez to coraz większy obrót. Jednocześnie komputeryzacja giełd pozwoliła sprostać rosnącej aktywności inwestorów, otwierając nowe możliwości osiągnięcia zysku, jak również zmniejszenia kosztów. Jednym z przykładów takiego działania mogła być próba automatycznego wychwytywania pojawiających się zleceń o dużym wolumenie (np. składanych przez banki inwestycyjne), tak by maksymalnie zmienić cenę na niekorzyść zlecającego. By chronić się przed takim działaniem stworzono specjalne strategie pozwalające rozbić jedno duże zlecenie na wiele mniejszych, które w ogólnym wolumenie handlu nie zostaną zauważone. Tym samym zlecenie, które kiedyś było pojedynczą obserwacją w obecnej chwili rozbijane jest na setki dużo mniejszych zleceń, co w prosty sposób przenosi się na wzrost ogólnej ilości danych finansowych. Jednocześnie w dalszym ciągu pojawiają się pewne nieefektywności rynkowe spowodowane pojawiającymi się zleceniami, jednak odnoszą się one do dużo mniejszych wolumenów. Wykorzystaniem tego typu nieefektywności zajmują się właśnie fundusze HFT. O ich znaczeniu świadczy fakt, iż w roku 2012 około 25\% zleceń pojawiających się na światowych giełdach związana była z działalnością tego typu funduszy. Więcej informacji na temat historii giełd oraz rozwoju HFD i HFT można znaleźć w pracy \citep{irene2013}.
 
 \section{Metody przygotowywania danych do testów}
 
-Finansowe dane wysokiej częstotliwości kojarzone są głównie z handlem wysokiej częstotliwości (HFT), w którym pozycje trzymane są w bardzo krótkich interwałach czasowych, często nie przekraczających jednej sekundy. Zastosowanie tego typu danych wymaga posiadania odpowiedniej infrastruktury do ich przechowywania jak i analizy. Dla przykładu jeden miesiąc \emph{HFD} (High-frequency Financial Data - ang. finansowe dane wysokiej częstotliwości) dla kontraktu fES.H15 zajmuje w postaci binarnej około 600 megabajtów, w wersji skompresowanej jest to ok. 60 megabajtów. Należy nadmienić, że ilość instrumentów finansowych może być liczona w dziesiątkach tysięcy.
+Zastosowanie finansowych danych wysokiej częstotliwości wymaga posiadania odpowiedniej infrastruktury potrzebnej do ich przechowywania i analizy. Dla przykładu jeden miesiąc HFD dla kontraktu fES.H15 zajmuje w postaci binarnej około 600 megabajtów, w wersji skompresowanej jest to ok. 60 megabajtów. Należy nadmienić, że ilość instrumentów finansowych może być liczona w dziesiątkach tysięcy.
 
 Jednocześnie, w wielu zastosowaniach taka rozdzielczość danych nie jest w ogóle wymagana, a nawet może być szkodliwa \citep{doman2009modelowanie}. Dlatego też w praktyce w analizie cen instrumentów finansowych wykorzystywane są świeczki OHLCV (Open, High, Low, Close, Volume). Konstrukcja świeczki w klasycznym podejściu opiera się na agregacji wszystkich transakcji z okresu $t + \delta t$, gdzie $\delta$ określa przedział czasowy świeczki (np. godzina, 10 minut, etc.). Następnie pierwsza dostępna cena określa cenę otwarcia (Open), wartość najwyższa to High, najniższa Low, a ostatnia cena określa cenę zamknięcia (Close), zsumowany wolumen transakcji stanowi Volume. Tak przygotowane dane wykorzystywane są w dalszych etapach analizy finansowej (estymacja modeli zmienności, analizy technicznej i statystycznej etc.). Co więcej, dane w tej postaci są powszechnie dostępne w popularnych serwisach finansowych w internecie.
 
@@ -196,6 +201,7 @@ W przypadku posiadania bazy danych historycznych istnieje możliwość oczyszcze
   \caption{Obserwacja czerwona jest początkiem nowego reżimu danych, dlatego też względem obserwacji przeszłych mogłaby być traktowana jako odstająca. Jednak w świetle dalszych obserwacji jest jak najbardziej poprawna.}
   \label{fig:odst2}
 \end{figure}
+
 
 \section{Charakterystyka danych wysokiej częstotliwości - stylizowane fakty}
 
@@ -402,6 +408,9 @@ Jednocześnie w pewnych bardzo rzadkich okolicznościach podobne zdarzenia mogą
 
 %% Parametry filtru
 
+
+Algorytmy filtracji danych finansowych zwykle objęte są tajemnicą handlową i nie są upubliczniane, z tego też powodu literatura w tym temacie jest bardzo uboga. Najpełniejszy opis związany z usuwaniem obserwacji odstających można znaleźć w pracy \citep{muller2010filtering}, będącej opisem patentu na system wykrywający obserwacje odstające. Z uwagi, iż jest to system płatny, znacznie bardziej złożony i wymagający (np. wymagane jest wykorzystywanie więcej niż jednego źródła danych, w celu wzajemnego potwierdzania przychodzących obserwacji pomiędzy tymi źródłami), nie istniała możliwość wykorzystania tego systemu do analizy danych przeznaczonych na potrzeby niniejszej pracy. Dlatego też stworzono projekt autorskiego filtru, którego celem jest uzyskanie jak najlepszych rezultatów w usuwaniu obserwacji odstających na posiadanych danych.
+
 \section{Główne założenia}
 
 Prezentowany filtr ma za zadanie usuwać obserwacje odstające, opierając się na stylizowanych faktach dotyczących danych wysokiej częstotliwości, jak również zaobserwowanych charakterystykach pojawiających się obserwacji odstających. Jednocześnie stara się wziąć pod uwagę cztery praktyczne wymagania pozwalające na jego implementację w rzeczywistym środowisku produkcyjnym:
@@ -597,7 +606,7 @@ Kluczową sprawą w testowaniu działania filtra danych jest możliwość stworz
 
 Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Co więcej, żaden z prezentowanych w literaturze modeli nie uwzględnia możliwości pojawienia się obserwacji odstających w książce zleceń, jak również zdaniem autora nie uwzględnia w wystarczający sposób charakterystyki kontraktów terminowych (różnice w płynności w trakcie życia kontraktu). 
 
-Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględnia w sobie specyfikę kontraktów terminowych, jak również złożone charakterystyki możliwych ścieżek obserwacji odstających dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych. W pierwszej fazie przeprowadzono subiektywne, ręczne czyszczenie rzeczywistych danych. Następnie wyniki czyszczenia ręcznego zostały porównane z czyszczeniem z wykorzystaniem filtra. 
+Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględnia w sobie specyfikę kontraktów terminowych, jak również złożone charakterystyki możliwych ścieżek obserwacji odstających, dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych. W pierwszej fazie przeprowadzono subiektywne, ręczne czyszczenie rzeczywistych danych. Następnie wyniki czyszczenia ręcznego zostały porównane z czyszczeniem z wykorzystaniem filtra. 
 
 \section{Wyniki filtrowania}
 
@@ -797,14 +806,11 @@ fZW.H10 & 12937149 & 16.43\% & 0.05\% & 74144 & 19189 & 12181 & 7008 & 12855997 
 
 
 
-
-
-
 \chapter{Podsumowanie}
 
 W pracy przedstawiono zagadnienie budowy rzetelnych danych finansowych, które mogą zostać użyte zarówno w testach algorytmicznej strategii inwestycyjnej, jak również w handlu rzeczywistym. Przedstawiono empiryczne obserwacje przemawiające za występowaniem obserwacji odstających w finansowych danych wysokiej częstotliwości, które mogą zaburzyć wszystkie procedury weryfikacji strategii. Również w tym kontekście została omówiona możliwość wykorzystania metod statystyki odpornej w handlu algorytmicznym do radzenia sobie z tego typu obserwacjami. Niestety mimo bardzo pożądanych własności statystycznych prezentowanych przez procedury odporne, często nie mogą one zostać wykorzystane z uwagi na zbyt dużą złożoność obliczeniową, jak również wymóg konsekwencji stosowania procedur odpornych w każdym module strategii (generowanie sygnałów, zarządzanie ryzykiem, etc.).
 
-Przedstawiono również implementację prostego filtru usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu filtrów. W dalszych pracach, by uzupełnić działanie filtru, należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających
+Przedstawiono również implementację prostego filtru usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu filtrów. W dalszych pracach, by uzupełnić działanie filtru, należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających.
 
 \bibliographystyle{plainnat}
 \bibliography{literatura_mag}
