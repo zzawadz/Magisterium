@@ -41,6 +41,8 @@
 %\usepackage{pst-plot} % For axes
 %
 
+
+
 \newgeometry{tmargin=2.5cm, bmargin=2.5cm, lmargin=2cm, rmargin=2cm}
 \doublespacing
 \addcontentsline{toc}{chapter}{Wstęp}
@@ -69,8 +71,15 @@ Specjalność: Modelowanie i Prognozowanie}
 
 \maketitle
 
+\thispagestyle{empty}
+    \null\vspace{\stretch {1}}
+        %\begin{flushright}
+        \large
+                Powstanie tej pracy nie byłoby możliwe bez zbiorów danych finansowych udostępnionych przez fundusz inwestycyjny Metrum Capital. Szczególne podziękowania należą się Michałowi Pruskiemu, Przemysławowi Sępowi i Annie Homie za wszelką pomoc udzieloną w przygotowaniu danych do analizy. 
+        %\end{flushright}
+\vspace{\stretch{2}}\null
 
-Powstanie tej pracy nie byłoby możliwe bez wsparcia Metrum Capital. Coś tu jeszcze ładnego napiszę:)
+
 
 \tableofcontents
 \chapter*{Wstęp}
@@ -80,7 +89,7 @@ W ostatnich latach coraz szerszą popularność zdobywają algorytmiczne fundusz
 
 Jednocześnie podejście algorytmiczne krytycznie zależy od jakości dostępnych danych. Ma tu zastosowanie zasada GIGO\footnote{GIGO - Garbage in-Garbage out} mówiąca, że nawet jeśli cały proces analizy jest poprawny, to przy danych złej jakości jakiekolwiek wnioski nie mają sensu. W przypadku gdy inwestycji dokonuje człowiek, niezależnie od tego czy wspomaga się w procesie decyzyjnym analizą fundamentalną, techniczną, czy modelami statystycznymi, może on dokonać oceny jakości danych i dokonać ewentualnego czyszczenia. Poprzez usunięcie obserwacji odstających, analityk zabezpiecza się przed błędni wskazaniami użytych procedur. W przypadku algorytmicznym, z uwagi na ilość analizowanych instrumentów finansowych, jakakolwiek manualna ingerencja w dane jest znacząco utrudniona, bądź w ogóle nie możliwa. W takim przypadku jednym z rozwiązań jest wykorzystanie procedur odpornych, bądź odpowiednich algorytmów usuwania obserwacji odstających.
 
-Najważniejszym celem pracy jest prezentacja metody przygotowywania rzetelnych danych finansowych, które później mogą być użyte w algorytmicznych strategiach inwestycyjnych, począwszy od etapu budowy, poprzez weryfikację, aż do rzeczywistego użycia na rynku. Główny nacisk rozważań zostanie położony na dane wysokiej częstotliwości, na których opiera się prezentowana metoda. Następnie przedstawione zostaną argumenty dotyczące występowania w danych finansowych obserwacji odstających, jak również rola statystyki odpornej w tej dziedzinie. Głównym celem pracy będzie prezentacja filtru pozwalającego usuwać obserwacje odstające w danych wysokiej częstotliwości.
+Najważniejszym celem pracy jest prezentacja metody przygotowywania rzetelnych danych finansowych, które później mogą być użyte w algorytmicznych strategiach inwestycyjnych, począwszy od etapu budowy, poprzez weryfikację, aż do rzeczywistego użycia na rynku. Główny nacisk rozważań zostanie położony na dane wysokiej częstotliwości, na których opiera się prezentowana metoda. Następnie przedstawione zostaną argumenty dotyczące występowania w danych finansowych obserwacji odstających, jak również rola statystyki odpornej w tej dziedzinie. Głównym celem pracy będzie prezentacja filtra pozwalającego usuwać obserwacje odstające w danych wysokiej częstotliwości.
 
 Jednocześnie w pracy poruszone zostaną pewne aspekty związane z prowadzeniem badań w zakresie algorytmicznych strategii inwestycyjnych. Zaprezentowane zostanie pojęcie \emph{backtestu}, będącego podstawowym narzędziem wykorzystywanym do oceny strategii inwestycyjnych. Sam backtest jest bardzo potężnym i złożonym narzędziem, które niestety w bardzo prosty sposób może zostać wykorzystane niepoprawnie, dając mylne wyniki. Dlatego też w pracy położono nacisk na przedstawienie możliwych konsekwencji popełnionych błędów i nieuwzględnienia pewnych zjawisk na otrzymane z backtestu wyniki. Tym samym praca ma na celu ulepszenie wypracowanych standardów prowadzenia badań strategii algorytmicznych w duchu pracy \citep{de2015future}.
 
@@ -91,11 +100,11 @@ Jednocześnie w pracy poruszone zostaną pewne aspekty związane z prowadzeniem 
 
 Symulacja historyczna (ang. \emph{backtest}) jest to  podstawowa procedura umożliwiająca ocenę jakości algorytmicznej strategii inwestycyjnej, bez której ciężko wyobrazić sobie możliwość prowadzenia badań w zakresie algorytmicznych strategii inwestycyjnych. W backteście, na podstawie danych historycznych generowane są hipotetyczne momenty otwarcia i zamknięcia pozycji, a następnie na ich podstawie wyznaczany jest szereg zwrotów dla strategii. Taki szereg w dalszej części służy do weryfikacji działania określonej strategii inwestycyjnej pod wieloma względami (stosunek ryzyka do hipotetycznego zwrotu, maksymalne obsunięcia kapitału, itd.). 
 
-Sama metodologia prowadzenia backtestów jest bardzo złożonym i wieloetapowym procesem, w którym błąd na jakimkolwiek etapie sprawi, iż otrzymane wnioski będą fałszywe . Co więcej - specyfika popełnianych błędów sprawia, że dużo częściej otrzymuje się wyniki zbyt optymistyczne, przez co twórca strategii ma wrażenie, iż w przyszłości będzie ona zyskowna, gdy faktycznie strategia może niczym nie różnić się od losowego podejmowania decyzji. W dalszej części omówiono kilka podstawowych zagadnień związanych z prowadzeniem rzetelnych symulacji, jednak w żaden sposób nie wyczerpują one listy problemów, które muszą zostać rozwiązane by otrzymane wyniki były wiarygodne.
+Sam backtest jest bardzo złożonym i wieloetapowym procesem, w którym błąd na jakimkolwiek etapie sprawi, iż otrzymane wnioski będą fałszywe . Co więcej - specyfika popełnianych błędów sprawia, że dużo częściej otrzymuje się wyniki zbyt optymistyczne, przez co twórca strategii ma wrażenie, iż w przyszłości będzie ona zyskowna, gdy faktycznie strategia może niczym nie różnić się od losowego podejmowania decyzji. W dalszej części omówiono kilka podstawowych zagadnień związanych z prowadzeniem rzetelnych symulacji, jednak w żaden sposób nie wyczerpują one listy problemów, które muszą zostać rozwiązane by otrzymane wyniki były wiarygodne.
 
-Jednym z typowych błędów jest nieuwzględnienie w analizie kosztów transakcyjnych (od każdej dokonywanej transakcji giełdowej pobierana jest pewna prowizja) jak również ewentualnego wpływu zlecenia na rynek. Dla przykładu - przy bardzo małej płynności (małej ilości zawieranych transakcji) możliwe jest że w danej chwili cena aktywa na rynku wynosiła $k$\$ i w danych historycznych zarejestrowana jest transakcja po tej cenie, to testowany system faktycznie nie byłby w stanie dokonać takiej transakcji (np. nie była dostępna odpowiednia ilość ofert po stronie przeciwnej). Uzyskiwane różnice pomiędzy hipotetyczną ceną wykonania zlecenia a faktyczną, mimo iż subtelnie małe\footnote{Prowizja za jedną akcję na amerykańskich giełdach wynosi 0.005USD (\url{https://www.interactivebrokers.com/en/?f=commission&p=stocks1})}, nawarstwiają się, co jest szczególnie widoczne w przypadku strategii wykonujących dużą ilość transakcji.
+Jednym z typowych błędów jest nieuwzględnienie w analizie kosztów transakcyjnych (od każdej dokonywanej transakcji giełdowej pobierana jest pewna prowizja) jak również ewentualnego wpływu zlecenia na rynek. Dla przykładu - przy bardzo małej płynności (małej ilości zawieranych transakcji) możliwe jest że w danej chwili cena aktywa na rynku wynosiła $k$\$ i w danych historycznych zarejestrowana jest transakcja po tej cenie, jednak testowany system faktycznie nie byłby w stanie dokonać takiej transakcji (np. nie była dostępna odpowiednia ilość ofert po stronie przeciwnej). Uzyskiwane różnice pomiędzy hipotetyczną ceną wykonania zlecenia a faktyczną, mimo iż bardzo małe\footnote{Prowizja za jedną akcję na amerykańskich giełdach wynosi 0.005USD (\url{https://www.interactivebrokers.com/en/?f=commission&p=stocks1})}, nawarstwiają się, co jest szczególnie widoczne w przypadku strategii wykonujących dużą ilość transakcji.
 
-Jednocześnie dużo poważniejsze błędy dotyczą aspektów statystycznych, a szczególnie zagadnienia \emph{overfittingu}. W przypadku danych finansowych (jak również większości danych ekonomicznych), analityk nie ma możliwości przeprowadzenia eksperymentu - musi więc bazować na dostępnych danych, co więcej okres oczekiwania na nowe dane bywa bardzo długi. Z tego też powodu na etapie testowania hipotez dotyczących strategii inwestycyjnych analityk staje przed problemem testowania wielokrotnego. Co więcej, można pokazać (\citep{bailey2013pseudo}), że dla wielu strategii poprzez zwykłą optymalizację można znaleźć zestaw parametrów dających bardzo optymistyczne wyniki, które jednak nie są odtwarzalne w rzeczywistym handlu.
+Jednocześnie dużo poważniejsze błędy dotyczą aspektów statystycznych, a szczególnie zagadnienia \emph{overfittingu}. W przypadku danych finansowych (jak również większości danych ekonomicznych), analityk nie ma możliwości przeprowadzenia eksperymentu - musi więc bazować na dostępnych danych. Z tego też powodu na etapie testowania hipotez dotyczących strategii inwestycyjnych analityk staje przed problemem testowania wielokrotnego. Co więcej, można pokazać (\citep{bailey2013pseudo}), że dla wielu strategii poprzez zwykłą optymalizację można znaleźć zestaw parametrów dających bardzo optymistyczne wyniki, które jednak nie są odtwarzalne w rzeczywistym handlu.
 
 Szerszy przegląd zagadnień związanych z prowadzeniem backtestów można znaleźć w pracach \citep{lopez2015backtesting}, \citep{bailey2014statistical}, informacje na temat sposobów przeciwdziałania overfittingowi \citep{bailey2014probability}, jak również pewnych metod pozwalających prowadzić badania w zakresie strategii inwestycyjnych bez wykorzystywania backtestu - \citep{carr2014determining}.
 
@@ -146,29 +155,29 @@ Bid Size 	 Price
 
 \section{Źródło finansowych danych wysokiej częstotliwości}
 
-Finansowe dane wysokiej częstotliwości  - \emph{HFD} (High-frequency Financial Data - ang. finansowe dane wysokiej częstotliwości) kojarzone są głównie z handlem wysokiej częstotliwości (HFT - ang. High-frequency Trading), w którym pozycje trzymane są w bardzo krótkich interwałach czasowych, często nieprzekraczających jednej sekundy. W takim przypadku zwrot z pojedynczej transakcji jest bardzo niski (opiera się na zmianie ceny w okresie co najwyżej kilku sekund). Z tego powodu inwestor stosujący tego typu podejście, by osiągnąć sensowną rentowność musi dokonywać bardzo wielu tego typu transakcji, co łączy się z bardzo dużą ilością składanych zleceń. Same finansowe dane wysokiej częstotliwości, to właśnie informacje o każdym pojawiającym się na rynku zleceniu kupna i sprzedaży. 
+Finansowe dane wysokiej częstotliwości  - \emph{HFD} (High-frequency Financial Data - ang. finansowe dane wysokiej częstotliwości) kojarzone są głównie z handlem wysokiej częstotliwości (HFT - ang. High-frequency Trading), w którym pozycje trzymane są w bardzo krótkich interwałach czasowych, często nieprzekraczających jednej sekundy. W takim przypadku zwrot z pojedynczej transakcji jest bardzo niski (opiera się na zmianie ceny w okresie co najwyżej kilku sekund). Z tego powodu inwestor stosujący tego typu podejście, by osiągnąć wysoką rentowność musi dokonywać bardzo wielu tego typu transakcji, co łączy się z bardzo dużą ilością składanych zleceń. Same finansowe dane wysokiej częstotliwości to właśnie informacje o każdym pojawiającym się na rynku zleceniu kupna i sprzedaży. 
 
 Pojawienie się terminu ''finansowe dane wysokiej częstotliwości'' związane jest jednak nie z działaniem funduszy HFT, tylko wzrostu zainteresowania rynkiem finansowym, jak również jego komputeryzacją. Sam wzrost liczby inwestorów spowodował zwiększenie ilości składanych zleceń, a przez to coraz większy obrót. Jednocześnie komputeryzacja giełd pozwoliła sprostać rosnącej aktywności inwestorów, otwierając nowe możliwości osiągnięcia zysku, jak również zmniejszenia kosztów. Jednym z przykładów takiego działania mogła być próba automatycznego wychwytywania pojawiających się zleceń o dużym wolumenie (np. składanych przez banki inwestycyjne), tak by maksymalnie zmienić cenę na niekorzyść zlecającego. By chronić się przed takim działaniem stworzono specjalne strategie pozwalające rozbić jedno duże zlecenie na wiele mniejszych, które w ogólnym wolumenie handlu nie zostaną zauważone. Tym samym zlecenie, które kiedyś było pojedynczą obserwacją w obecnej chwili rozbijane jest na setki dużo mniejszych zleceń, co w prosty sposób przenosi się na wzrost ogólnej ilości danych finansowych. Jednocześnie w dalszym ciągu pojawiają się pewne nieefektywności rynkowe spowodowane pojawiającymi się zleceniami, jednak odnoszą się one do dużo mniejszych wolumenów. Wykorzystaniem tego typu nieefektywności zajmują się właśnie fundusze HFT. O ich znaczeniu świadczy fakt, iż w roku 2012 około 25\% zleceń pojawiających się na światowych giełdach związana była z działalnością tego typu funduszy. Więcej informacji na temat historii giełd oraz rozwoju HFD i HFT można znaleźć w pracy \citep{irene2013}.
 
 \section{Metody przygotowywania danych do testów}
 
-Zastosowanie finansowych danych wysokiej częstotliwości wymaga posiadania odpowiedniej infrastruktury potrzebnej do ich przechowywania i analizy. Dla przykładu jeden miesiąc HFD dla kontraktu fES.H15 zajmuje w postaci binarnej około 600 megabajtów, w wersji skompresowanej jest to ok. 60 megabajtów. Należy nadmienić, że ilość instrumentów finansowych może być liczona w dziesiątkach tysięcy.
+Zastosowanie finansowych danych wysokiej częstotliwości wymaga posiadania odpowiedniej infrastruktury potrzebnej do ich przechowywania i analizy. Dla przykładu jeden miesiąc HFD dla kontraktu ESH15 zajmuje w postaci binarnej około 600 megabajtów, w wersji skompresowanej jest to ok. 60 megabajtów. Należy nadmienić, że ilość instrumentów finansowych może być liczona w dziesiątkach tysięcy.
 
-Jednocześnie, w wielu zastosowaniach taka rozdzielczość danych nie jest w ogóle wymagana, a nawet może być szkodliwa \citep{doman2009modelowanie}. Dlatego też w praktyce w analizie cen instrumentów finansowych wykorzystywane są świeczki OHLCV (Open, High, Low, Close, Volume). Konstrukcja świeczki w klasycznym podejściu opiera się na agregacji wszystkich transakcji z okresu $t + \delta t$, gdzie $\delta$ określa przedział czasowy świeczki (np. godzina, 10 minut, etc.). Następnie pierwsza dostępna cena określa cenę otwarcia (Open), wartość najwyższa to High, najniższa Low, a ostatnia cena określa cenę zamknięcia (Close), zsumowany wolumen transakcji stanowi Volume. Tak przygotowane dane wykorzystywane są w dalszych etapach analizy finansowej (estymacja modeli zmienności, analizy technicznej i statystycznej etc.). Co więcej, dane w tej postaci są powszechnie dostępne w popularnych serwisach finansowych w internecie.
+Jednocześnie, w wielu zastosowaniach taka rozdzielczość danych nie jest w ogóle wymagana, a nawet może być szkodliwa \citep{doman2009modelowanie}. Związane jest to między innymi z efektami mikrostruktury rynku takimi jak ''bid-ask bounce''\footnote{Efekt  ''bid-ask bounce'' związany jest z ''odbijaniem się'' ceny pomiędzy ceną kupna a ceną sprzedaży, powodując ciągłe zmiany ceny transakcyjnej, co w przypadku estymowania zmienności może prowadzić do jej zawyżenia (ruch na instrumencie nie wynika z realnych przesłanek, jest jedynie efektem konstrukcji książki zleceń).}. Dlatego też w praktyce w analizie cen instrumentów finansowych wykorzystywane są świeczki OHLCV (Open, High, Low, Close, Volume). Konstrukcja świeczki w klasycznym podejściu opiera się na agregacji wszystkich transakcji z okresu $t + \delta t$, gdzie $\delta$ określa przedział czasowy świeczki (np. godzina, 10 minut, etc.). Następnie pierwsza dostępna cena określa cenę otwarcia (Open), wartość najwyższa to High, najniższa Low, a ostatnia cena określa cenę zamknięcia (Close), zsumowany wolumen transakcji stanowi Volume. Tak przygotowane dane wykorzystywane są w dalszych etapach analizy finansowej (estymacja modeli zmienności, analizy technicznej i statystycznej etc.). Co więcej, dane w tej postaci są powszechnie dostępne w popularnych serwisach finansowych w internecie.
 
 Przedstawione podejście, oparte jedynie na wykonanych zleceniach, znajduje zastosowanie w przypadku płynnych aktywów, w których w danym okresie czasu dokonuje się wiele transakcji. Jednakże może dojść do sytuacji w której w przedziale $\delta$ nie są zawierane żadne transakcje. Przykład takiego zdarzenia prezentowany jest na rysunku \ref{fig:cottonTrans}. W godzinach od drugiej do trzynastej nie wystąpiły na przedstawionym instrumencie żadne transakcje. W przypadku próby budowy świeczek godzinowych w tym okresie wystąpiłyby brakujące dane.
 
 Brak aktywności transakcyjnej nie oznacza jednak braku aktywności w ogóle. W dalszym ciągu na giełdę mogą przybywać zlecenia trafiające do książki zleceń, zmieniając tym samym rynkową wycenę instrumentu. Dlatego też wprowadza się metodę budowy świeczek OHLCV opartą na aktualnym stanie książki zleceń. W takim przypadku jako cenę otwarcia dla instrumentu, przyjmuje się wartość Mid w chwili $t$, następnie w okresie $<t,t + \delta t>$ monitoruje się wszystkie zmiany Ask i Bid, w celu znalezienia najwyższej i najniższej wartości Mid. Ceną zamknięcia jest Mid w chwili $t + \delta t$. Takie podejście pozwala lepiej uchwycić aktywność rynkową, co prezentuje rysunek \ref{fig:cottonOrder} przedstawiający BidTicki i AskTicki dla tego samego okresu który został przedstawiony na rysunku \ref{fig:cottonTrans}. Wyraźnie widać, że w okresie w którym nie występowały transakcje instrument w dalszym ciągu był aktywny i jego wycena rynkowa zmieniała się. Taka procedura budowy świeczek OHLCV pozwala znacząco zredukować ilość brakujących danych występujących w szeregu czasowym. 
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[scale=0.5]{wykresy/cottonTickH.PNG}
   \caption{Transakcje na marcowym kontrakcie terminowym na bawełnę w 2015 roku. Przez większą część sesji nie pojawiają się żadne obserwacje.}
   \label{fig:cottonTrans}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[scale=0.5]{wykresy/cottonOrderH.PNG}
   \caption{Aktywność na pierwszym poziomie książki zleceń na marcowy kontrakt na bawełnę w 2015 roku. Mimo, iż przez większą część sesji nie pojawiają się transakcje, książka zleceń jest aktywna i ceny Bid i Ask cały czas ewokują.}
@@ -178,49 +187,48 @@ Brak aktywności transakcyjnej nie oznacza jednak braku aktywności w ogóle. W 
 \subsection{Przeprowadzanie symulacji historycznych z wykorzystaniem danych OHLCV}
 
 
-By zapewnić rzetelne wyniki backtestu, dla każdej świeczki OHLCV powinny zostać stworzone towarzyszące świeczki zbudowane z wykorzystaniem cen Bid i Ask. Zostaną one użyte w symulacji historycznej do otwierania i zamykania pozycji. Ma to szczególne znaczenie w przypadku mniej płynnych aktywów, w których spread pomiędzy Bidem i Askiem może być bardzo znaczący - na rysunku \ref{fig:cottonOrder} w pewnych momentach stosunek spreadu do ceny Mid wynosi $0.7\%$, co oznacza, że cena wykonania zlecania kupna byłaby niedoszacowana o ok $0.35\%$, natomiast cena wykonania zleceń sprzedaży byłaby przeszacowana o tę wartość. W takiej sytuacji w testach pozycje zajmowane byłyby po bardziej atrakcyjnych cenach niż były dostępne w rzeczywistości, a uzyskany wynik byłby przeszacowany. Ma to szczególne znaczenie w przypadku strategii o dużej częstotliwości transakcyjnej, w których efekt wykorzystania cen Mid (lub cen wyznaczonych na podstawie transakcji) jest dodatkowo potęgowany przez ilość transakcji. W skrajnych przypadkach cały zysk określonej strategii inwestycyjnej może wynikać jedynie z tego efektu. Dlatego też należy z dużą uwagą podchodzić do wyników algorytmicznych strategii inwestycyjnych przedstawionych w literaturze, gdyż prezentowane w nich wyniki mogą nie uwzględniać opisanego efektu związanego z użytymi danymi, a co za tym idzie są one niemożliwe do odtworzenia w poprawnych warunkach testowych. 
+By zapewnić rzetelne wyniki backtestu, dla każdej świeczki OHLCV powinny zostać stworzone towarzyszące świeczki zbudowane z wykorzystaniem cen Bid i Ask. Zostaną one użyte w symulacji historycznej do otwierania i zamykania pozycji. Ma to szczególne znaczenie w przypadku mniej płynnych aktywów, w których spread pomiędzy Bidem i Askiem może być bardzo znaczący - na rysunku \ref{fig:cottonOrder} w pewnych momentach stosunek spreadu do ceny Mid wynosi $0.7\%$, co oznacza, że cena wykonania zlecania kupna byłaby niedoszacowana o ok $0.35\%$, natomiast cena wykonania zleceń sprzedaży byłaby przeszacowana o tę wartość. W takiej sytuacji w testach pozycje zajmowane byłyby po bardziej atrakcyjnych cenach niż były dostępne w rzeczywistości, a uzyskany wynik byłby przeszacowany. Ma to szczególne znaczenie w przypadku strategii o dużej częstotliwości transakcyjnej, w których efekt wykorzystania cen Mid (lub cen wyznaczonych na podstawie transakcji) jest dodatkowo potęgowany przez ilość transakcji. W skrajnych przypadkach cały zysk określonej strategii inwestycyjnej może wynikać jedynie z tego efektu. Dlatego też należy z dużą uwagą podchodzić do wyników algorytmicznych strategii inwestycyjnych przedstawionych w literaturze, gdyż prezentowane w nich wyniki mogą nie uwzględniać opisanego efektu, a co za tym idzie, wyniki tych strategii są one niemożliwe do odtworzenia w warunkach wykorzystujących ceny Bid i Ask. 
 
 Należy zaznaczyć, że dane wysokiej częstotliwości, w oparciu o które powinny być budowane szeregi czasowe dla backtestów, są dostępne jedynie odpłatnie, co znacząco podnosi próg wejścia dla algorytmicznych funduszy inwestycyjnych. Jednocześnie dla pewnej grupy najbardziej płynnych instrumentów finansowych i określonej klasy strategii inwestycyjnych charakteryzujących się niską częstotliwością\footnote{Im większa częstotliwość zawierania transakcji, tym większe znaczenie mają koszty transakcyjne, a nawet minimalne różnice związane ze zmianą ceny w czasie od momentu złożenia zlecenia aż do momentu wykonania.} zawierania transakcji przedstawiony efekt może być bez znaczenia.
 
-\subsection{Czyszczenie danych historycznych i danych przychodzących online.}
+\subsection{Czyszczenie danych historycznych.}
 
-W przypadku posiadania bazy danych historycznych istnieje możliwość oczyszczenia istniejących danych offline. W takiej sytuacji mogą zostać wykorzystane bardziej zaawansowane techniki wykrywania obserwacji odstających (pojedyncze obserwacje mogą być rozpatrywane względem przeszłych jak i przyszłych danych, por. Rys. \ref{fig:odst1} i Rys. \ref{fig:odst2}). Takie postępowanie może okazać się niepoprawne, gdyż otrzymany szereg może być znacznie lepiej oczyszczony, a przez to mieć inne charakterystyki niż szereg na którym rzeczywiście będzie pracować strategia. W takim przypadku może się okazać, iż przetestowana strategia bardzo dobrze sprawdza się na ''czystych'' danych, a nie zostanie wykryte, iż jakiekolwiek obserwacje odstające drastycznie zmieniają otrzymane wyniki. Z tego też powodu, istotnym może okazać się przeprowadzenie analizy wpływu jakości danych na wskazania strategii, w trakcie której pewne instrumenty mogą zostać nawet wykluczone z portfela, gdyż dostępne dla nich dane są zbyt zanieczyszczone.  
+W przypadku posiadania bazy danych historycznych istnieje możliwość oczyszczenia istniejących danych historycznych. W takiej sytuacji mogą zostać wykorzystane bardziej zaawansowane techniki wykrywania obserwacji odstających (pojedyncze obserwacje mogą być rozpatrywane względem przeszłych jak i przyszłych danych, por. Rys. \ref{fig:odst1} i Rys. \ref{fig:odst2}). Takie postępowanie może okazać się niepoprawne, gdyż otrzymany szereg może być znacznie lepiej oczyszczony, a przez to mieć inne charakterystyki niż szereg na którym rzeczywiście będzie pracować strategia. W takim przypadku może się okazać, iż przetestowana strategia bardzo dobrze sprawdza się na ''czystych'' danych, a nie zostanie wykryte, iż jakiekolwiek obserwacje odstające drastycznie zmieniają otrzymane wyniki. Z tego też powodu, istotnym może okazać się przeprowadzenie analizy wpływu jakości danych na wskazania strategii. W konsekwencji pewne instrumenty mogą zostać nawet wykluczone z portfela, gdyż dostępne dla nich dane są zbyt zanieczyszczone.  
 
-
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[width=170mm, height=100mm]{wykresy/odst1}
+  \includegraphics[width=130mm, height=70mm]{wykresy/odst1}
   \caption{Obserwacja czerwona w stosunku do reszty obserwacji (zarówno przeszłych i przyszłych) jest obserwacją odstającą.}
   \label{fig:odst1}
 \end{figure}
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[width=170mm, height=100mm]{wykresy/odst2}
-  \caption{Obserwacja czerwona jest początkiem nowego reżimu danych, dlatego też względem obserwacji przeszłych mogłaby być traktowana jako odstająca. Jednak w świetle dalszych obserwacji jest jak najbardziej poprawna.}
+  \includegraphics[width=130mm, height=70mm]{wykresy/odst2}
+  \caption{Obserwacja czerwona jest początkiem nowego reżimu danych, dlatego też względem obserwacji przeszłych mogłaby być traktowana jako odstająca. Jednak w świetle dalszych obserwacji nie powinna zostać uznana za odstającą.}
   \label{fig:odst2}
 \end{figure}
 
 
 \section{Charakterystyka danych wysokiej częstotliwości - stylizowane fakty}
 
-Dane wysokiej częstotliwości charakteryzują się innymi własnościami niż klasycznie prezentowane charakterystyki finansowych szeregów czasowych. Co więcej, celem tej pracy jest wykorzystanie danych wysokiej częstotliwości do konstrukcji rzetelnych danych niższej częstotliwości, które będą użyteczne w dalszym modelowaniu statystycznym. Dlatego też pewne stylizowane fakty dotyczące danych finansowych, takie jak grube ogony, czy grupowanie zmienności, w przypadku danych wysokiej częstotliwości nie odgrywają tak istotnej roli.
+Dane wysokiej częstotliwości charakteryzują się innymi własnościami niż klasycznie prezentowane charakterystyki finansowych szeregów czasowych. Co więcej, celem tej pracy jest wykorzystanie danych wysokiej częstotliwości do konstrukcji rzetelnych danych niższej częstotliwości, które będą użyteczne w dalszym modelowaniu statystycznym. Dlatego też pewne stylizowane fakty dotyczące danych finansowych, takie jak grube ogony, czy grupowanie zmienności w przypadku danych wysokiej częstotliwości nie odgrywają tak istotnej roli.
 
-By lepiej przedstawić charakterystykę HFD prezentowane są pewne stylizowane fakty, uzyskane w trakcie analizy tego typu danych.
+By lepiej przedstawić charakterystykę HFD prezentowane są pewne kluczowe stylizowane fakty, w oparciu o które został zbudowany filtr wykrywający obserwacje odstające. Szerszy przegląd stylizowanych faktów w finansowych danych wysokiej częstotliwości można znaleźć w pracy \citep{Hautsch2011}.
 
 \subsection{Nierówne odstępy czasowe pomiędzy danymi}
 
 Dane napływają w nieregularnych odstępach czasowych, silnie uzależnionych od aktualnej godziny sesji. Na wykresie \ref{fig:volB} przedstawiono aktywność w początkowym okresie sesji dla instrumentu fZF.H15. W czasie około 4 godzin pojawiło się 3659 obserwacji. Wykres \ref{fig:volB} prezentuje aktywność na tym samym instrumencie w kolejnych 4 godzinach - w tym czasie pojawiło się aż 15975 obserwacji - czyli ponad 4 razy więcej niż w początkowym okresie.
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[scale=0.5]{wykresy/vol2.PNG}
   \caption{Aktywność zaraz po otwarciu sesji.}
   \label{fig:volB}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[scale=0.5]{wykresy/vol1.PNG}
   \caption{Aktywność w trakcie trwania sesji.}
@@ -235,16 +243,16 @@ Aktywność na książce zleceń w zależności od instrumentu charakteryzuje si
 W większości przypadków ilość BidTicków i AskTicków jest zbliżona. Jednak w pewnych sytuacjach mogą wystąpić znaczące różnice (np. w przypadku kontraktu zbliżającego się do wygaśnięcia). Taką sytuację prezentuje rysunek \ref{fig:fplh15} na którym widoczna jest sytuacja iż aktywność po stronie ask zniknęła całkowicie. W takim przypadku należy również rozważyć, czy obszary w których ''znika'' jedna ze stron książki zleceń należy uwzględnić w analizie, gdyż w takich okresach może nie być realnej możliwości handlu.  Na przykład, z uwagi na to, iż kontrakty terminowe mają określony termin zapadalności, charakteryzują się dosyć ściśle określonym schematem aktywności - w pierwszym okresie, zaraz po pojawieniu się danej serii na rynku występuje na nim bardzo mała płynność (a więc aktywność książki zleceń), dopiero w miarę zbliżania się do terminu zapadalności płynność rośnie, by w pewnym momencie załamać się \footnote{Takie załamanie aktywności może właśnie charakteryzować się ''zniknięciem'' jednej ze stron książki zleceń.}.
 Efekt załamania się aktywności na danej serii jest widoczny głównie na instrumentach w przypadku których inwestorzy posiadający pozycję w dniu wygaśnięcia kontraktu zobowiązani są do fizycznego dostarczenia towaru. Co więcej, szczegóły dostawy ustalane są w określonym dniu, zwykle na kilka tygodni przed wygaśnięciem kontraktu. W takim przypadku wszyscy inwestorzy niezainteresowani towarem (inwestujący w celach spekulacyjnych) przed tą datą zamykają pozycje i przechodzą na kolejną serię. W przypadku stosowania algorytmicznej strategii inwestycyjnej, należy stworzyć stosowny mechanizm przechodzenia na kolejne serie kontraktów terminowych, tak by nigdy nie wpaść w obszar obniżonej płynności, w którym zamknięcie posiadanej pozycji może być znacząco utrudnione.
 
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[scale=0.5]{wykresy/fESH.PNG}
+  \includegraphics[scale=0.6]{wykresy/fESH.PNG}
   \caption{Aktywność na marcowym kontrakcie terminowym na E-Mini S\&P 500 w 2015 roku. W ciągu około 46 minut pojawiło się 200000 ticków, co daje około 72 zdarzenia na sekundę.}
   \label{fig:spticks}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[scale=0.5]{wykresy/fplh15.PNG}
+  \includegraphics[scale=0.6]{wykresy/fplh15.PNG}
   \caption{Aktywność na marcowym kontrakcie terminowym na pallad w 2015 roku. W pewnym momencie aktywność po stronie ask w zasadzie zniknęła i przez kilkanaście godzin nie pojawiła się żadna zmiana po tej stronie książki zleceń.}
   \label{fig:fplh15}
 \end{figure}
@@ -254,25 +262,25 @@ Efekt załamania się aktywności na danej serii jest widoczny głównie na inst
 Ze sposobu konstrukcji książki zleceń wynika, iż nie jest możliwe by Bid był większy od Ask, gdyż w takiej sytuacji dochodzi do zawarcia transakcji. Jednakże z faktu, że dane mogą przychodzić asynchronicznie ten warunek nie zawsze musi być spełniony. Rysunek \ref{fig:fpah15} prezentuje taką sytuację, w której $Bid > Ask$, mimo że nie doszło do żadnej transakcji. Należy zaznaczyć, że stworzony na potrzeby pracy program do wizualizacji HFD, w danym punkcie czasowym zaznacza to zdarzenie które miało miejsce pierwsze. Oznacza to, że w przypadku w którym pojawiają się dwa Ticki o tym samym znaczniku czasowym i cenie, kolor na wykresie będzie odpowiadał pierwszemu z nich. Najbardziej wiarygodnym wyjaśnieniem tej sytuacji jest anulowanie zlecenia zaznaczonego w punkcie A, jednak informacja na ten temat dostępna jest dopiero później. Całe zdarzenie miało miejsce w przedziale czasowym mniejszym niż jedna sekunda.
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[scale=0.5]{wykresy/fpah15.PNG}
+  \includegraphics[scale=0.6]{wykresy/fpah15.PNG}
   \caption{fESH. Sytuacja w której przez bardzo krótki czas może być obserwowana sytuacja w której $Bid > Ask$, mimo iż w takim przypadku powinna być niemożliwa, gdyż powinno dojść do zawarcia transakcji.}
   \label{fig:fpah15}
 \end{figure}
 
 Rysunek \ref{fig:fBRNJ15} przedstawia ewolucję ceny instrumentu fBRNJ15 (górny wykres) wraz z wartością spreadu (dolny wykres). Mimo widocznych zmian Ask i Bid, spread przez większość czasu mieści się w przedziale około $0,018-0,03$, Jedynie w pewnych określonych momentach przekracza tę granicę. Co więcej, spread potrafi zmienić się w bardzo gwałtowny i dynamiczny sposób w bardzo krótkim okresie - rysunek \ref{fig:fBRNJ15Spread} prezentuje zdarzenie w którym w ciągu mniej niż sekundy spread z poziomu ok $0,02$ zwiększył się prawie dwuipółkrotnie do poziomu ok. 0,05, by następnie spaść do poziomu ok. 0,022. 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[scale=0.5]{wykresy/fBRNJ15.PNG}
+  \includegraphics[scale=0.45]{wykresy/fBRNJ15.PNG}
   \caption{Kontrakt terminowy na ropę. Zestawienie ewolucji Bid i Ask z obserwowanym spreadem (dolny wykres).}
   \label{fig:fBRNJ15}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
-  \includegraphics[scale=0.5]{wykresy/fBRNJ15Spread.PNG}
+  \includegraphics[scale=0.45]{wykresy/fBRNJ15Spread.PNG}
   \caption{Kontrakt terminowy na ropę. W ciągu mniej niż sekundy spread z poziomu ok $0,02$ zwiększył się prawie dwuipółkrotnie do poziomu ok. 0,05, by następnie spaść do poziomu ok. 0,022.}
   \label{fig:fBRNJ15Spread}
 \end{figure}
@@ -281,12 +289,11 @@ Rysunek \ref{fig:fBRNJ15} przedstawia ewolucję ceny instrumentu fBRNJ15 (górny
 
 \section{Obserwacje odstające w finansach}
 
-Obserwacje odstające mogą w pewnym stopniu być łączone z różnorodnymi błędami grubymi, dla przykładu obserwacja odstająca może pojawić się na etapie przepisywania danych poprzez przesunięcia przecinka, błędu w odczycie skali miernika itp. Jednakże definiowanie odstawania poprzez występowanie błędów grubych jest niewystarczające, gdyż w pewnych sytuacjach obserwacje mogą być w pełni poprawne, jednak ich użycie może znacząco zaburzyć wykonywane analizy. Przykładem takiej sytuacji mogą być dzienne zwroty dla pary walutowej EURCHF które prezentuje rysunek \ref{fig:eurchf}. Do dnia 14 stycznia 2015 roku dzienne zwroty zawierały się w przedziale od $-0.19\%$, do $0.26\%$. Natomiast od 16 stycznia ten przedział rozszerzył się do $(-1.1 \%; 3\%)$. Obserwacja z dnia 15 stycznia wynosi aż $-18.4\%$. W przypadku prostej, wizualnej analizy obserwacji w celu wykrycia obserwacji odstających taka wartość mogłaby zostać uznana za błąd polegający właśnie na przesunięciu przecinka, jednak jest to wartość całkowicie poprawna, która wynikła ze zdarzenia które miało miejsce w tym dniu. 15 stycznia 2015 roku Bank Centralny Szwajcarii ogłosił, iż przestanie bronić ustalonego kursu Franka wobec Euro, co spotkało się z bardzo gwałtowną reakcją inwestorów na całym świecie. Jednak mimo tego, iż ta obserwacja jest w pełni poprawna, znacząco odbiega od reszty obserwacji, a powtórne wystąpienie wartości na podobnym poziomie jest skrajnie nieprawdopodobne (wynikała ona z kompletnego zaskoczenia uczestników na rynku). Użycie takiej obserwacji w analizach dotyczących ryzyka (np. przy estymacji wartości zagrożonej), może prowadzić do znaczącego przeszacowania ryzyka w przyszłych okresach.
+Obserwacje odstające mogą w pewnym stopniu być łączone z różnorodnymi błędami grubymi, dla przykładu obserwacja odstająca może pojawić się na etapie przepisywania danych poprzez przesunięcia przecinka, błędu w odczycie skali miernika itp. Jednakże definiowanie odstawania poprzez występowanie błędów grubych jest niewystarczające, gdyż w pewnych sytuacjach obserwacje mogą być w pełni poprawne, jednak ich użycie może znacząco zaburzyć wykonywane analizy. Przykładem takiej sytuacji mogą być dzienne zwroty dla pary walutowej EURCHF które prezentuje rysunek \ref{fig:eurchf}. Do dnia 14 stycznia 2015 roku dzienne zwroty zawierały się w przedziale od $-0.19\%$, do $0.26\%$. Natomiast od 16 stycznia ten przedział rozszerzył się do $(-1.1 \%; 3\%)$. Obserwacja z dnia 15 stycznia wynosi aż $-18.4\%$. W przypadku prostej, wizualnej analizy obserwacji w celu wykrycia obserwacji odstających taka wartość mogłaby zostać uznana za błąd polegający właśnie na przesunięciu przecinka, jednak jest to wartość wynikła ze zdarzenia które miało miejsce w tym dniu. 15 stycznia 2015 roku Bank Centralny Szwajcarii ogłosił, iż przestanie bronić ustalonego kursu Franka wobec Euro, co spotkało się z bardzo gwałtowną reakcją inwestorów na całym świecie. Jednak mimo tego, iż ta obserwacja nie jest wynikiem błędu, znacząco odbiega od reszty obserwacji, a powtórne wystąpienie wartości na podobnym poziomie jest skrajnie nieprawdopodobne (wynikała ona z kompletnego zaskoczenia uczestników na rynku). Użycie takiej obserwacji w analizach dotyczących zmienności (np. przy estymacji wartości zagrożonej), może prowadzić do znaczącego przeszacowania ryzyka w przyszłych okresach.
 
 Dlatego też na potrzeby pracy obserwacja odstająca będzie definiowana jako obserwacja która w relacji do większości próby budzi zaskoczenie \citep{Ripley2004}. Wadą takiej definicji jest jej brak formalizmu, jednak jest bardzo ogólna, a przez to można ją odnieść do wielu praktycznych zastosowań, bez potrzeby specyfikacji konkretnego modelu odstawania.
 
 Pewnym przykładem wpływu obserwacji odstającej na otrzymane wyniki będzie sytuacja w której strategia przyjmowała przez pierwszy kwartał 2015 roku pozycję długą. Jeżeli za ten okres obliczymy współczynnik Sharpe'a zdefiniowany jako:
-
 \begin{equation}
 \label{eq:sharpe}
 SH = \frac{\bar{r} - r_f}{sd(r)},
@@ -298,7 +305,7 @@ gdzie $\bar{r}$, to średni zwrot portfela, $r_f$ - stopa wolna od ryzyka (w prz
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{wykresy/EURCHF}
+  \includegraphics[scale=0.6]{wykresy/EURCHF}
   \caption{Dzienne zwroty na parze walutowej EURCHF. Obserwacja z dnia 2015-01-15 wyraźnie odbiega od reszty wartości, jednak jest obserwacją poprawną, która wynika z decyzji Centralnego Banku Szwajcarii ogłoszonej tego dnia.}
   \label{fig:eurchf}
 \end{figure}
@@ -308,7 +315,7 @@ gdzie $\bar{r}$, to średni zwrot portfela, $r_f$ - stopa wolna od ryzyka (w prz
 
 Każda procedura statystyczna konstruowana jest przy założeniu spełnienia określonych założeń, co do mechanizmu generującego dane. Przykładowo, dane generowane są przez rozkład normalny, a obserwacje są niezależne. Niestety w praktycznych przypadkach bardzo często nie można zapewnić iż wymagane przez procedurę założenia są spełnione. W takich przypadkach dalsze wnioskowanie statystyczne może być nieuprawnione, gdyż albo nieznane są w ogóle własności tych procedur, albo wymagania co do jakości uzyskanych estymatorów (obciążenie, efektywność, etc.) są niemożliwe do spełnienia.
 
-Podejście proponowane przez statystykę odporną ma na celu prezentację procedur dających wiarygodne oszacowania nie tylko w przypadku, gdy dane generowane są przez zakładany rozkład, lecz również w przypadku gdy rozkład generujący dane odbiega od zakładanego. Odporna procedura statystyczna powinna dawać wiarygodne oszacowania również w przypadku gdy analizowany zbiór danych zawiera obserwacje odstające \citep{Van:2000}. Przykłady użycia odpornej procedury statystycznej prezentują rysunki \ref{lad1} i \ref{lad2}.
+Podejście proponowane przez statystykę odporną ma na celu prezentację procedur dających wiarygodne oszacowania nie tylko w przypadku, gdy dane generowane są przez zakładany rozkład, lecz również w przypadku gdy rozkład generujący dane odbiega od zakładanego. Odporna procedura statystyczna powinna dawać wiarygodne oszacowania również w przypadku gdy analizowany zbiór danych zawiera obserwacje odstające \citep{Van:2000}. Przykłady użycia odpornej procedury statystycznej prezentują rysunki \ref{lad1} i \ref{lad2}. Szersze omówienie zagadnień związanych z zastosowaniem metod statystki odpornej można znaleźć w pracach \citep{dkzz1}i \citep{DK2012}.
 
 \begin{figure}[H]
 \begin{subfigure}[t]{0.45\textwidth}
@@ -332,7 +339,7 @@ Procedury odporne są bardziej złożone obliczeniowo od swoich klasycznych odpo
 
 Drugi aspekt związany jest z samą specyfiką testów strategii inwestycyjnych. W klasycznie prowadzonej analizie statystycznej po estymacji modelu przeprowadza się jego weryfikację. W tym celu wykorzystuje się testy dopasowania, zdolności prognostyczne, bądź klasyfikacyjne na odpowiednio przygotowanych zbiorach testowych. W przypadku strategii algorytmicznych, stosowane procedury statystyczne wykorzystywane są do generowania sygnałów określających pozycję jaką w danej chwili czasowej powinna zająć strategia. Sama pozycja może być utrzymywana przez określony czas symulacji (np. do zakończenia sesji w danym dniu symulacji), bądź do otrzymania sygnału zamknięcia, lub sygnału otwarcia pozycji przeciwnej. Następnie na podstawie szeregu cen dla instrumentu wyznaczana jest wartość pozycji i kolejne jej zmiany, aż do zamknięcia. Następnie na podstawie pozycji które zajmowała strategia generowane są krzywe kapitału strategii. Stosowanie procedur odpornych do wyznaczania sygnałów, po to by uchronić się przed obserwacjami odstającymi w danych w pewnym sensie legitymuje ich występowanie w szeregu. W takim przypadku mogą one mieć wpływ na wyznaczone wartości pozycji, a za tym idzie na wiarygodność wyniku prezentowanego przez strategię, co w dalszym kroku nakładałoby wymóg stosowania również odpornych metod do weryfikacji rezultatów strategii, uniemożliwiając stosowanie metod klasycznych , takich jak wskaźnik Sharpe.  
 
-Dlatego też bardziej odpowiednim wydaje się usuwanie obserwacji odstających we wczesnym etapie symulacji, tak by nie miały one wpływu na stosowane procedury statystyczne, jak również wyznaczane wartości pozycji. Jednocześnie wykorzystanie odpornych procedur statystycznych mających chronić przed odstępstwami od zakładanych rozkładów w dalszym ciągu jest uprawnione.
+Dlatego też bardziej odpowiednim wydaje się usuwanie obserwacji odstających we wczesnym etapie symulacji, tak by nie miały one wpływu na stosowane procedury statystyczne, jak również wyznaczane wartości pozycji. Jednocześnie wykorzystanie odpornych procedur statystycznych mających chronić przed odstępstwami od zakładanych rozkładów w dalszym ciągu jest uzasadnione.
 
 \section{Przykłady obserwacji odstających w HFD}
 
@@ -378,14 +385,14 @@ Na rysunku \ref{fig:fCNH15} przedstawiono serię obserwacji odstających idącą
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{wykresy/fCNH15.PNG}
+  \includegraphics[scale=0.4]{wykresy/fCNH15.PNG}
   \caption{Idąca pionowo w górę seria obserwacji odstających, powodująca gwałtowną zmianę ceny po jednej ze stron książki zleceń w bardzo krótkim czasie.}
   \label{fig:fCNH15}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{wykresy/fCNH15ZOOM.PNG}
+  \includegraphics[scale=0.4]{wykresy/fCNH15ZOOM.PNG}
   \caption{Zbliżenie na sytuację przedstawioną na Rys. \ref{fig:fCNH15}. Seria obserwacji odstających powodująca gwałtowną zmianę ceny pojawiła się w czasie mniej niż jednej sekundy.}
   \label{fig:fCNH15ZOOM}
 \end{figure}
@@ -393,7 +400,7 @@ Na rysunku \ref{fig:fCNH15} przedstawiono serię obserwacji odstających idącą
 
 Jednocześnie w pewnych bardzo rzadkich okolicznościach podobne zdarzenia mogą faktycznie mieć miejsce i nie mogą zostać uznane za błędy systemu przesyłającego dane, a tym samym obserwacje odstające. Przykładami takich zdarzeń mogą być ''flash crash'', czyli gwałtowne zmiany ceny instrumentu rynkowego powstałe między innymi pod wpływem interakcji strategii wykorzystujących handel wysokiej częstotliwości \citep{Easley2010}.
 
-\chapter{Filtr}
+\chapter{Prezentacja filtra dla finansowych danych wysokiej częstotliwości}
 
 \newcommand{\Spt}{\ensuremath{Sp_{t}} }
 
@@ -406,10 +413,10 @@ Jednocześnie w pewnych bardzo rzadkich okolicznościach podobne zdarzenia mogą
 \newcommand{\tsl}{\ensuremath{{t-1}} }
 
 
-%% Parametry filtru
+%% Parametry filtra
 
 
-Algorytmy filtracji danych finansowych zwykle objęte są tajemnicą handlową i nie są upubliczniane, z tego też powodu literatura w tym temacie jest bardzo uboga. Najpełniejszy opis związany z usuwaniem obserwacji odstających można znaleźć w pracy \citep{muller2010filtering}, będącej opisem patentu na system wykrywający obserwacje odstające. Z uwagi, iż jest to system płatny, znacznie bardziej złożony i wymagający (np. wymagane jest wykorzystywanie więcej niż jednego źródła danych, w celu wzajemnego potwierdzania przychodzących obserwacji pomiędzy tymi źródłami), nie istniała możliwość wykorzystania tego systemu do analizy danych przeznaczonych na potrzeby niniejszej pracy. Dlatego też stworzono projekt autorskiego filtru, którego celem jest uzyskanie jak najlepszych rezultatów w usuwaniu obserwacji odstających na posiadanych danych.
+Algorytmy filtracji danych finansowych zwykle objęte są tajemnicą handlową i nie są upubliczniane, z tego też powodu literatura w tym temacie jest bardzo uboga. Najpełniejszy opis związany z usuwaniem obserwacji odstających można znaleźć w pracy \citep{muller2010filtering}, będącej opisem patentu na system wykrywający obserwacje odstające. Z uwagi, iż jest to system płatny, znacznie bardziej złożony i wymagający (np. wymagane jest wykorzystywanie więcej niż jednego źródła danych, w celu wzajemnego potwierdzania przychodzących obserwacji pomiędzy tymi źródłami), nie istniała możliwość wykorzystania tego systemu do analizy danych przeznaczonych na potrzeby niniejszej pracy. Dlatego też stworzono projekt autorskiego filtra, którego celem jest uzyskanie jak najlepszych rezultatów w usuwaniu obserwacji odstających na posiadanych danych.
 
 \section{Główne założenia}
 
@@ -418,7 +425,7 @@ Prezentowany filtr ma za zadanie usuwać obserwacje odstające, opierając się 
 
 \begin{itemize}
 \item Dane mają być przetwarzane on-line. Oznacza to, że filtr musi działać bardzo szybko - tak by analiza pojedynczej obserwacji trwała krócej niż czas do pojawienia się kolejnej. Jednocześnie nie ma możliwości powrotu do obserwacji już przeanalizowanej (obserwacje nie są przechowywane).
-\item Filtr powinien posiadać zdolność samo-naprawy w przypadku nieprzewidzianych zdarzeń. Niedopuszczalne jest ''zakleszczenia się'' filtru, jest to sytuacja w której wszystkie kolejne obserwacje z jednej, lub drugiej strony książki zleceń są odrzucane.
+\item Filtr powinien posiadać zdolność samo-naprawy w przypadku nieprzewidzianych zdarzeń. Niedopuszczalne jest ''zakleszczenia się'' filtra, jest to sytuacja w której wszystkie kolejne obserwacje z jednej, lub drugiej strony książki zleceń są odrzucane.
 \item Koszt odrzucenia poprawnej obserwacji jest znacznie niższy, niż koszt przyjęcia za poprawną obserwacji odstającej. 
 \item Filtr jest w pełni deterministyczny.
 \end{itemize} 
@@ -429,12 +436,11 @@ Należy również zwrócić uwagę, iż filtr będzie  stosowany równocześnie 
 
 Drugie założenie odnosi się do bardzo złożonych zjawisk występujących na rynku które mogą doprowadzić do sytuacji w której filtr w pewien sposób się ''zakleszczy'', co znaczy, że wszystkie kolejne obserwacje będą odrzucane. Przykłady takich zdarzeń rynkowych  pojawią się wraz z omówieniem wprowadzonych mechanizmów samo-naprawy w filtrze prezentowanym w niniejszej pracy.
 
-Przypadek zakleszczenia się filtru jest bardzo groźny z punktu widzenia strategii, gdyż oznacza, że dane nie są przepuszczane do strategii, przez co niejako zostaje zatrzymane zarządzanie pozycją. Rozwiązaniem tego problemu jest stworzenie stosownego systemu ostrzeżeń, informującego o pojawiających się problemach (np. długa seria odrzuconych obserwacji). Jednak taki system wymaga nieustannego monitorowania (handel na międzynarodowym rynku odbywa się dwadzieścia cztery godziny na dobę), przez co może być niepraktyczny w realizacji. Dlatego też bardziej sensownym rozwiązaniem wydaje się wbudowanie pewnych metod naprawczych w sam filtr.
+Przypadek zakleszczenia się filtra jest bardzo groźny z punktu widzenia strategii, gdyż oznacza, że dane nie są przepuszczane do strategii, przez co niejako zostaje zatrzymane zarządzanie pozycją. Rozwiązaniem tego problemu jest stworzenie stosownego systemu ostrzeżeń, informującego o pojawiających się problemach (np. długa seria odrzuconych obserwacji). Jednak taki system wymaga nieustannego monitorowania (handel na międzynarodowym rynku odbywa się dwadzieścia cztery godziny na dobę), przez co może być niepraktyczny w realizacji. Dlatego też bardziej sensownym rozwiązaniem wydaje się wbudowanie pewnych metod naprawczych w sam filtr.
 
 Kolejne założenie ma na celu uwzględnienie natury wysokiej częstotliwości danych finansowych, w których czas pomiędzy kolejnymi obserwacjami jest bardzo krótki. Dlatego też nawet  uznanie poprawnej obserwacji za odstającą nie jest zbyt znaczące, gdyż na jej miejsce szybko pojawi się następna, jednocześnie przepuszczenie obserwacji odstającej ma szerokie konsekwencje w zasadzie w każdym dalszym module strategii.
 
 Założenie określające, iż filtr jest w pełni deterministyczny jest pewnym założeniem praktycznym, umożliwiającym uzyskanie powtarzalnych wyników w kolejnych iteracjach backtestów. Oczywiście w przypadku modeli wykorzystujących optymalizację nieliniową opierającą się na liczbach pseudolosowych (np. metody MCMC) spełnienie takiego założenia można zapewnić poprzez ustalenie ziarna dla generatora tychże liczb. Jednakże tego typu metody zwykle są złożone obliczeniowo, a przez to niepraktyczne w tego typu zastosowaniach.  
-
 
 
 
@@ -520,7 +526,7 @@ Natomiast \ref{War2} ma na celu wychwycenie sytuacji, w której Bid przewyższa 
 \end{figure}
 
 
-W linijce \ref{Zab1} spread przeliczany jest powtórnie, jednak z wykorzystaniem ostatniej odrzuconej ceny Ask. Powtórne sprawdzenie poprawności ticku pozwala zabezpieczyć działanie filtru w przypadkach dużych skoków cen. Scenariusz sytuacji występującej bez zastosowania takiego zabezpieczenia przedstawia rysunek \ref{fig:JUMP}. Jednocześnie może to prowadzić do zaakceptowania jako poprawnej sytuacji, w której krótko po sobie nastąpiły dwie obserwacje odstające po przeciwnej stronie książki zleceń (rysunek \ref{fig:NEXTOUT}).
+W linijce \ref{Zab1} spread przeliczany jest powtórnie, jednak z wykorzystaniem ostatniej odrzuconej ceny Ask. Powtórne sprawdzenie poprawności ticku pozwala zabezpieczyć działanie filtra w przypadkach dużych skoków cen. Scenariusz sytuacji występującej bez zastosowania takiego zabezpieczenia przedstawia rysunek \ref{fig:JUMP}. Jednocześnie może to prowadzić do zaakceptowania jako poprawnej sytuacji, w której krótko po sobie nastąpiły dwie obserwacje odstające po przeciwnej stronie książki zleceń (rysunek \ref{fig:NEXTOUT}).
 
 \begin{figure}[h]
   \centering
@@ -529,7 +535,7 @@ W linijce \ref{Zab1} spread przeliczany jest powtórnie, jednak z wykorzystaniem
   \label{fig:NEXTOUT}
 \end{figure}
 
-Linia \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko możliwości zakleszczenia się filtru. W przypadku gdy dana cena Bid jest odrzucana, poprzez wartość RmVal następuje  podniesienie ceny Ask używanej do obliczeń wewnątrz filtru (sam filtr nie modyfikuje wartości tików). Powoduje to, iż nawet w przypadku dużej asymetrii w ilości pojawiających się obserwacji po jednej stronie książki zleceń przekraczających granicę CrossRange, nowe obserwacje w końcu zostaną zaakceptowane (por. rys. \ref{fig:longStreak}).
+Linia \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko możliwości zakleszczenia się filtra. W przypadku gdy dana cena Bid jest odrzucana, poprzez wartość RmVal następuje  podniesienie ceny Ask używanej do obliczeń wewnątrz filtra (sam filtr nie modyfikuje wartości tików). Powoduje to, iż nawet w przypadku dużej asymetrii w ilości pojawiających się obserwacji po jednej stronie książki zleceń przekraczających granicę CrossRange, nowe obserwacje w końcu zostaną zaakceptowane (por. rys. \ref{fig:longStreak}).
 
 \begin{figure}[h]
   \centering
@@ -541,13 +547,13 @@ Linia \ref{Zab2} jest kolejnym zabezpieczeniem przeciwko możliwości zakleszcze
 %\begin{figure}[H]
 %  \centering
 %  \includegraphics[width=0.6\textwidth]{wykresy/relacjaBIDASK.pdf}
-%  \caption{Przypadek zakleszczenia się filtru spowodowany nagłym skokiem ceny.}
+%  \caption{Przypadek zakleszczenia się filtra spowodowany nagłym skokiem ceny.}
 %  \label{fig:JUMP}
 %\end{figure}
 
 \subsection{Aktualizacja \MSpn}
 
-Listing \ref{FiltrUpdate} przedstawia sposób aktualizacji średniego spreadu \MSpn:
+Listing \ref{filtrapdate} przedstawia sposób aktualizacji średniego spreadu \MSpn:
 \IncMargin{5em}
 \begin{algorithm}
 
@@ -563,7 +569,7 @@ Listing \ref{FiltrUpdate} przedstawia sposób aktualizacji średniego spreadu \M
 }
 \DecMargin{5em}
 
-\caption{Algorytm aktualizacji \MSpn \label{FiltrUpdate}}
+\caption{Algorytm aktualizacji \MSpn \label{filtrapdate}}
 \end{algorithm}
 
 Nowa wartość \MSpn jest ważoną średnią poprzedniej wartości i aktualnego spreadu. Przy czym  waga \Spt zależna jest od czasu pomiędzy dwiema ostatnimi obserwacjami (\ref{uwg1ta}). Im krótszy czas, tym wpływ nowej wartości spreadu jest większy. Dostosowywanie wartości $\phi$ odbywa się poprzez parametr $\lambda$ - większe wartości $\lambda$ oznaczają większy wpływ \Spt na wartość \MSpn. 
@@ -577,11 +583,11 @@ Dodatkowo wprowadzono parametr $\phi_{max}$, określający maksymalny udział ak
   \label{fig:longTime}
 \end{figure}
 
-Jednocześnie w sytuacji dużych odstępów między danymi ujawnia się również dodatkowa słabość filtru. Dla pierwszej obserwacji po długim okresie spread może być liczony względem ceny która jest już nieaktualna, jednak nowa cena jeszcze się nie pojawiła. W obecnym podejściu do filtracji danych, w którym założone jest działanie online (po sprawdzeniu ticku nie ma już do niego powrotu), obejście tego problemu jest bardzo trudne (o ile w ogóle możliwe). W pewnym stopniu rozwiązaniem jest wprowadzone wcześniej zabezpieczenie \ref{Zab1}, które nie dopuści do zakleszczenia się filtra po skoku ceny.
+Jednocześnie w sytuacji dużych odstępów między danymi ujawnia się również dodatkowa słabość filtra. Dla pierwszej obserwacji po długim okresie spread może być liczony względem ceny która jest już nieaktualna, jednak nowa cena jeszcze się nie pojawiła. W obecnym podejściu do filtracji danych, w którym założone jest działanie online (po sprawdzeniu ticku nie ma już do niego powrotu), obejście tego problemu jest bardzo trudne (o ile w ogóle możliwe). W pewnym stopniu rozwiązaniem jest wprowadzone wcześniej zabezpieczenie \ref{Zab1}, które nie dopuści do zakleszczenia się filtra po skoku ceny.
 
 Parametr $\phi_{min}$ określa minimalny udział \Spt w \MSpn. Przyspiesza on dostosowywanie się wartości średniego spreadu dla płynnego rynku, w którym czas pomiędzy kolejnymi obserwacjami jest bardzo krótki.
 
-Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filtru. Rozszerzenie spreadu o wartość $RmVal$ pozwala na samo-naprawienie się filtru w sytuacji w której nastąpił gwałtowny skok spreadu, kosztem kilku pierwszych obserwacji (por. \ref{fig:spreadJump}). Takie zabezpieczenie posiada oczywistą wadę w przypadku całej serii złych danych - powolne rozszerzanie się średniego spreadu w końcu spowoduje, że obserwacje odstające zostaną uznane za poprawne (por \ref{fig:outSeries}). W tym przypadku należy dokonać wyboru dotyczącego wrażliwości filtru na długie serie złych danych, a szybkością samonaprawy w przypadku zakleszczenia. 
+Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się filtra. Rozszerzenie spreadu o wartość $RmVal$ pozwala na samo-naprawienie się filtra w sytuacji w której nastąpił gwałtowny skok spreadu, kosztem kilku pierwszych obserwacji (por. \ref{fig:spreadJump}). Takie zabezpieczenie posiada oczywistą wadę w przypadku całej serii złych danych - powolne rozszerzanie się średniego spreadu w końcu spowoduje, że obserwacje odstające zostaną uznane za poprawne (por \ref{fig:outSeries}). W tym przypadku należy dokonać wyboru dotyczącego wrażliwości filtra na długie serie złych danych, a szybkością samonaprawy w przypadku zakleszczenia. 
 
 \begin{figure}[h]
   \centering
@@ -604,9 +610,7 @@ Linijka \ref{Zab3} jest kolejnym zabezpieczeniem przeciwko zakleszczeniu się fi
 
 Kluczową sprawą w testowaniu działania filtra danych jest możliwość stworzenia stosownego środowiska testowego, które w wiarygodny sposób symuluje rzeczywiste zachowanie się książki zleceń. W takim środowisku obserwacje odstające znane są apriori (tzn. wiadomo którą obserwację proces symulujący książkę zleceń wygenerował jako odstającą), wtedy ocena jakości filtra może być przeprowadzona w oparciu o ilość odrzuconych obserwacji, które w rzeczywistości nie były odstające, jak również ilość zaakceptowanych obserwacji odstających.
 
-Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Co więcej, żaden z prezentowanych w literaturze modeli nie uwzględnia możliwości pojawienia się obserwacji odstających w książce zleceń, jak również zdaniem autora nie uwzględnia w wystarczający sposób charakterystyki kontraktów terminowych (różnice w płynności w trakcie życia kontraktu). 
-
-Stworzenie modelu pozwalającego symulować książkę zleceń, który uwzględnia w sobie specyfikę kontraktów terminowych, jak również złożone charakterystyki możliwych ścieżek obserwacji odstających, dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych. W pierwszej fazie przeprowadzono subiektywne, ręczne czyszczenie rzeczywistych danych. Następnie wyniki czyszczenia ręcznego zostały porównane z czyszczeniem z wykorzystaniem filtra. 
+Sam model książki zleceń, umożliwiający symulacje jest bardzo złożoną kwestią. W literaturze prezentowane są między innymi modele oparte na aukcjach \citep{doubleAuction}, łańcuchach Markowa \citep{huang2015simulating}, jak również wykorzystujące systemy agentowe \citep{chiarella2009impact}. Jednakże prezentowane modele do estymacji parametrów wymagają informacji na temat ewolucji całej książki zleceń na wszystkich poziomach. Wykorzystane w niniejszej pracy dane dotyczą jedynie ewolucji pierwszego poziomu książki zleceń, przez co są dalece niepełne by móc je wykorzystać w którymkolwiek z prezentowanych modeli. Jednocześnie klasa modeli \emph{Autoregressive Conditional Duration} (ACD) zaproponowanych w \citep{engle1998} z uwagi na występujące w danych zanieczyszczenie wymagałaby stworzenia stosownych, odpornych procedur estymacji co dalece wykracza poza ramy niniejszej pracy, dlatego też przyjęto inną, dużo mniej doskonałą metodę oceny jakości filtra danych. W pierwszej fazie przeprowadzono subiektywne, ręczne czyszczenie rzeczywistych danych. Następnie wyniki czyszczenia ręcznego zostały porównane z czyszczeniem z wykorzystaniem filtra. 
 
 \section{Wyniki filtrowania}
 
@@ -638,7 +642,7 @@ TPR = \frac{FP}{FP + TN},
 gdzie $FP$ oznacza liczbę obserwacji uznanych za odstające, mimo że nimi nie były. Natomiast $TN$ określa ilość obserwacji, które zarówno przez filtr jak i osobę filtrującą dane zostały uznane za poprawne. Wyniki dla trzech różnych wartości mnożnika spreadu przedstawiono w tabeli \ref{tab:result1}. Zawiera ona średnie wartości TPR i FPR dla kolejnych serii kontraktów na poszczególny instrument finansowy. Pozostałe parametry użyte w procesie filtracji zaprezentowano w tabeli \ref{params2}. Należy zwrócić uwagę, iż modyfikacja tych parametrów nie ma aż takiego wpływu na działanie filtra jak zmiana mnożnika $SprMulti$.
 
 
-Filtr generalnie dobrze radzi sobie w sytuacjach, w których obserwacje odstające pojawiają się pojedynczo (por. rys. \ref{fig:ojfh10}), natomiast w zupełności nie radzi sobie w przypadku poziomych i pionowych ścieżek obserwacji odstających (por. rys. \ref{fig:fzwh11}). Co więcej występowanie ścieżek obserwacji odstających w dużym stopniu zaburza wskazania TPR. Założenia na których opiera się filtr wymagają by był on samonaprawialny, to znaczy, by nie było możliwości, że jakiekolwiek zdarzenie na rynku (np. gwałtowny skok spreadu) spowoduje, że wszystkie kolejne obserwacje zostaną odrzucone. By wymusić takie zachowanie, zastosowano zabezpieczenie rozszerzające spread w sytuacji odrzucenia obserwacji. W przypadku pojedynczej obserwacji odstającej nie jest to problemem, gdyż chwilowe rozszerzenie spreadu zostanie praktycznie natychmiast zmniejszone wraz z kolejną, poprawną obserwacją. Jednak w wypadku serii obserwacji odstających powoduje to, iż część obserwacji z takiej serii może (po odpowiednio dużym rozszerzeniu spreadu)zostać zaakceptowana jako poprawna. Co więcej, jeżeli rozszerzanie się spreadu, powodujące w konsekwencji pojawienie się obserwacji odstających odbywa się w dosyć płynny sposób (odległości pomiędzy kolejnymi tickami nie są duże), wtedy żadna z obserwacji nie zostanie uznana za odstającą (do takiej sytuacji doszło na rysunku \ref{fig:fzwh11}). Jednocześnie należy zwrócić uwagę, że serie obserwacji odstających mogą składać się nawet z kilkuset punktów, więc jeżeli dla danego instrumentu typowym sposobem realizacji odstawania są serie obserwacji odstających, to TPR dla proponowanego filtru będzie bardzo niski. 
+Filtr generalnie dobrze radzi sobie w sytuacjach, w których obserwacje odstające pojawiają się pojedynczo (por. rys. \ref{fig:ojfh10}), natomiast w zupełności nie radzi sobie w przypadku poziomych i pionowych ścieżek obserwacji odstających (por. rys. \ref{fig:fzwh11}). Co więcej występowanie ścieżek obserwacji odstających w dużym stopniu zaburza wskazania TPR. Założenia na których opiera się filtr wymagają by był on samonaprawialny, to znaczy, by nie było możliwości, że jakiekolwiek zdarzenie na rynku (np. gwałtowny skok spreadu) spowoduje, że wszystkie kolejne obserwacje zostaną odrzucone. By wymusić takie zachowanie, zastosowano zabezpieczenie rozszerzające spread w sytuacji odrzucenia obserwacji. W przypadku pojedynczej obserwacji odstającej nie jest to problemem, gdyż chwilowe rozszerzenie spreadu zostanie praktycznie natychmiast zmniejszone wraz z kolejną, poprawną obserwacją. Jednak w wypadku serii obserwacji odstających powoduje to, iż część obserwacji z takiej serii może (po odpowiednio dużym rozszerzeniu spreadu)zostać zaakceptowana jako poprawna. Co więcej, jeżeli rozszerzanie się spreadu, powodujące w konsekwencji pojawienie się obserwacji odstających odbywa się w dosyć płynny sposób (odległości pomiędzy kolejnymi tickami nie są duże), wtedy żadna z obserwacji nie zostanie uznana za odstającą (do takiej sytuacji doszło na rysunku \ref{fig:fzwh11}). Jednocześnie należy zwrócić uwagę, że serie obserwacji odstających mogą składać się nawet z kilkuset punktów, więc jeżeli dla danego instrumentu typowym sposobem realizacji odstawania są serie obserwacji odstających, to TPR dla proponowanego filtra będzie bardzo niski. 
 
 \begin{longtable}{llll}
   \hline
@@ -730,7 +734,7 @@ Symbol & Mnożnik 2 & Mnożnik 2.5 & Mnożnik 3 \\
   \label{fig:fzwh11}
 \end{figure}
 
-W tabelach \ref{tab:result2}, i \ref{tab:result3} zaprezentowano wybrane, surowe wyniki dotyczące kolejnych serii kontraktów terminowych na sok pomarańczowy i pszenicę. O ile w przypadku soku pomarańczowego filtr radził sobie dosyć dobrze (usuwał ok 82\% pojawiających się obserwacji odstających), to w przypadku pszenicy jakość działania filtru była dużo gorsza (w żadnym przypadku nie przekroczył 30\% usuniętych obserwacji odstających). Analiza wyników działania filtra pozwala więc sądzić, iż w przypadku soku pomarańczowego mamy raczej do czynienia z pojedynczymi obserwacjami odstającymi, natomiast dla pszenicy dominują serie tego typu obserwacji.
+W tabelach \ref{tab:result2}, i \ref{tab:result3} zaprezentowano wybrane, surowe wyniki dotyczące kolejnych serii kontraktów terminowych na sok pomarańczowy i pszenicę. O ile w przypadku soku pomarańczowego filtr radził sobie dosyć dobrze (usuwał ok 82\% pojawiających się obserwacji odstających), to w przypadku pszenicy jakość działania filtra była dużo gorsza (w żadnym przypadku nie przekroczył 30\% usuniętych obserwacji odstających). Analiza wyników działania filtra pozwala więc sądzić, iż w przypadku soku pomarańczowego mamy raczej do czynienia z pojedynczymi obserwacjami odstającymi, natomiast dla pszenicy dominują serie tego typu obserwacji.
 
 {\scriptsize
 \begin{longtable}{lrllrrrrrr}
@@ -810,9 +814,10 @@ fZW.H10 & 12937149 & 16.43\% & 0.05\% & 74144 & 19189 & 12181 & 7008 & 12855997 
 
 W pracy przedstawiono zagadnienie budowy rzetelnych danych finansowych, które mogą zostać użyte zarówno w testach algorytmicznej strategii inwestycyjnej, jak również w handlu rzeczywistym. Przedstawiono empiryczne obserwacje przemawiające za występowaniem obserwacji odstających w finansowych danych wysokiej częstotliwości, które mogą zaburzyć wszystkie procedury weryfikacji strategii. Również w tym kontekście została omówiona możliwość wykorzystania metod statystyki odpornej w handlu algorytmicznym do radzenia sobie z tego typu obserwacjami. Niestety mimo bardzo pożądanych własności statystycznych prezentowanych przez procedury odporne, często nie mogą one zostać wykorzystane z uwagi na zbyt dużą złożoność obliczeniową, jak również wymóg konsekwencji stosowania procedur odpornych w każdym module strategii (generowanie sygnałów, zarządzanie ryzykiem, etc.).
 
-Przedstawiono również implementację prostego filtru usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu filtrów. W dalszych pracach, by uzupełnić działanie filtru, należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających.
+Przedstawiono również implementację prostego filtra usuwającego obserwacje odstające w oparciu o zachowanie spreadu między cenami Bid i Ask. Niestety prezentowany filtr tylko w niedużej części spełnił swoje zadanie, usuwając średnio około 50\% obserwacji odstających. Prezentowany wynik mimo, iż bardzo niski (przepuszczenie pojedynczej obserwacji odstającej jest bardzo niebezpieczne) pozwala sądzić, iż filtr może znaleźć zastosowanie w praktyce, jednak nie jako samodzielne narzędzie usuwające obserwacje odstające, ale część pewnego systemu filtrów. W dalszych pracach, by uzupełnić działanie filtra, należałoby zwrócić szczególną uwagę na wykrywanie poziomych i pionowych serii obserwacji odstających.
 
-\bibliographystyle{plainnat}
+
+\bibliographystyle{plainZZ}
 \bibliography{literatura_mag}
 \addcontentsline{toc}{section}{Bibliografia}
 \listoftables
